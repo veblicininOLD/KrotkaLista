@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent" android:orientation="vertical" android:layout_width="match_parent">
+    
+    <LinearLayout android:id="@+id/linearLayout1" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="center" android:baselineAligned="false">
+        <ImageButton android:id="@+id/imageButton1" android:src="@drawable/icon" android:layout_width="wrap_content" android:layout_height="wrap_content"></ImageButton>
+        <ImageButton android:id="@+id/imageButton2" android:src="@drawable/icon" android:layout_width="wrap_content" android:layout_height="wrap_content"></ImageButton>
+        <ImageButton android:id="@+id/imageButton3" android:src="@drawable/icon" android:layout_width="wrap_content" android:layout_height="wrap_content"></ImageButton>
+        <ImageButton android:id="@+id/imageButton4" android:src="@drawable/icon" android:layout_width="wrap_content" android:layout_height="match_parent"></ImageButton>
+    </LinearLayout>
+    
+    <Button android:id="@+id/new_payment" android:layout_width="match_parent" android:text="@string/button_new_payment" android:layout_height="wrap_content"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/button_account_payment" android:id="@+id/button2" android:layout_width="match_parent"></Button>
+    <TextView android:layout_width="match_parent" android:id="@+id/textView1" android:layout_height="wrap_content" android:text="@string/suggested_participant"></TextView>
+    <TextView android:layout_width="match_parent" android:text="TextView" android:id="@+id/suggested_person" android:layout_height="wrap_content"></TextView>
+  
+ 
+  
+</LinearLayout>

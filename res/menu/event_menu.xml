@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<!--
+	<item android:id="@+id/office_menu_employees"
+		android:title="@string/office_menu_employees"
+		android:icon="@drawable/ic_menu_manage"/>
+	-->
+		<item android:id="@+id/participants"
+		android:title="@string/participants"
+		android:icon="@drawable/ic_menu_manage"/>
+
+<!--	<item android:id="@+id/office_menu_stats"
+		android:title="@string/office_menu_stats"
+		android:icon="@drawable/ic_menu_manage"/>
+	
+	<item android:id="@+id/office_menu_jobs"
+		android:title="@string/office_menu_jobs"
+		android:icon="@drawable/ic_menu_manage"/>
+	-->
+</menu>

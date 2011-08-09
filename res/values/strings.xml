@@ -2,4 +2,22 @@
 <resources>
     <string name="hello">Hello World, Main!</string>
     <string name="app_name">Krotka Lista</string>
+    <string name="main_title">Wyjazdy</string>
+    
+    <string name="button_new_payment">Nowa płatność</string>
+    <string name="button_account_payment">Rozlicz płatność</string>
+    <string name="button_participants">Uczestnicy</string>
+    
+    <string name="form_who">Kto:</string>
+    <string name="form_how_much">Ile:</string>
+    <string name="form_for_what">Za co:</string>
+    <string name="form_for_who">Za kogo:</string>
+    <string name="form_when">Kiedy:</string>
+    
+    <string name="participants">Uczestnicy</string>
+    
+    <string name="suggested_participant">Sugerowana osoba:</string>
+    
+    <string name="participant_add_new">Dodaj</string>
+    
 </resources>
