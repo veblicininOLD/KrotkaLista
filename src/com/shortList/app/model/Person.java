@@ -1,9 +1,9 @@
-package com.shortList.application.model;
+package com.shortList.app.model;
 
 public class Person extends Entity {
-	
+
 	private String name; 
-	
+
 	public Person(long id, String name) {
 		super(id);
 		this.name = name;
@@ -20,7 +20,7 @@ public class Person extends Entity {
 		Person p = (Person) o;
 		return p.getName().equals(getName());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return getName().hashCode();

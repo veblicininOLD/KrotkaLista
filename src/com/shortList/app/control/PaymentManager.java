@@ -1,10 +1,10 @@
-package com.shortList.application.control;
+package com.shortList.app.control;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.shortList.application.model.Event;
-import com.shortList.application.model.Person;
+import com.shortList.app.model.Event;
+import com.shortList.app.model.Person;
 
 public class PaymentManager {
 
@@ -15,10 +15,8 @@ public class PaymentManager {
 	 */
 	public Map<Person, Float> account(Event event){
 		Map<Person, Float> settlement = new HashMap<Person, Float>();
-		
+
 		return settlement;
 	}
-	 
-	
-	
+ 
 }

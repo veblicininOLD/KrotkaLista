@@ -1,8 +1,7 @@
-package com.shortList.application.model;
-
+package com.shortList.app.model;
 
 public class Entity {
-	
+
 	private long id;
 
 	public long getId() {
@@ -13,7 +12,7 @@ public class Entity {
 		super();
 		this.id = id;
 	}
-	
-	
-	
+
+
+
 }

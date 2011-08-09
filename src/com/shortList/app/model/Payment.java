@@ -1,4 +1,4 @@
-package com.shortList.application.model;
+package com.shortList.app.model;
 
 import java.util.Date;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 public class Payment extends Entity {
 
 	/** cash value of a payment **/
-	private float cash;
+	private float cashAmount;
 	/** date of execution of payment **/
 	private Date date;
 	/** person who payer a payment **/
@@ -15,11 +15,11 @@ public class Payment extends Entity {
 	private List<Person> debtors;
 	/** comments for a payment **/
 	private String description; 
-	
+
 	public Payment(long id, float cash, Date date, Person payer,
 			List<Person> debtors, String description) {
 		super(id);
-		this.cash = cash;
+		this.cashAmount = cash;
 		this.date = date;
 		this.payer = payer;
 		this.debtors = debtors;
@@ -29,7 +29,7 @@ public class Payment extends Entity {
 	public boolean isDebtor(Person person){
 		return debtors.contains(person);		
 	}
-	
+
 	public Date getDate() {
 		return date;
 	}
@@ -42,10 +42,10 @@ public class Payment extends Entity {
 	public String getDescription() {
 		return description;
 	}
-	public float getCash() {
-		return cash;
+	public float getCashAmount() {
+		return cashAmount;
 	} 
-	
-	
-	
+
+
+
 }
