@@ -9,7 +9,7 @@
         <ImageButton android:id="@+id/imageButton4" android:src="@drawable/icon" android:layout_width="wrap_content" android:layout_height="match_parent"></ImageButton>
     </LinearLayout>
     
-    <Button android:id="@+id/new_payment" android:layout_width="match_parent" android:text="@string/button_new_payment" android:layout_height="wrap_content"></Button>
+    <Button android:layout_width="match_parent" android:text="@string/button_new_payment" android:layout_height="wrap_content" android:id="@+id/new_payment"></Button>
     <Button android:layout_height="wrap_content" android:text="@string/button_account_payment" android:id="@+id/button2" android:layout_width="match_parent"></Button>
     <TextView android:layout_width="match_parent" android:id="@+id/textView1" android:layout_height="wrap_content" android:text="@string/suggested_participant"></TextView>
     <TextView android:layout_width="match_parent" android:text="TextView" android:id="@+id/suggested_person" android:layout_height="wrap_content"></TextView>

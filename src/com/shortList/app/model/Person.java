@@ -2,10 +2,15 @@ package com.shortList.app.model;
 
 public class Person extends Entity {
 
-	private String name; 
+	private String name;
+	//public final static long NEW_PERSON = -1;
 
 	public Person(long id, String name) {
 		super(id);
+		this.name = name;
+	}
+
+	public Person(String name) { 
 		this.name = name;
 	}
 

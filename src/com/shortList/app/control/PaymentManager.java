@@ -8,6 +8,15 @@ import com.shortList.app.model.Person;
 
 public class PaymentManager {
 
+	protected Event activeEvent = new Event();
+	//protected List<Event> 
+	
+	private static final PaymentManager instance = new PaymentManager();
+
+	public PaymentManager() {
+		// load all from database
+	}
+	
 	/** account the event
 	 * 
 	 * @param event to account
@@ -19,4 +28,20 @@ public class PaymentManager {
 		return settlement;
 	}
  
+	public boolean addParticipant(String name){
+		return addParticipant(new Person(name));
+	}
+	
+	public boolean addParticipant(Person person){
+		return activeEvent.getPersons().add(person);
+	}
+	
+	/** returns on instance of the Payment Manager.
+	 * 
+	 * @return instance of the Payment Manager
+	 */
+	public static PaymentManager getInstance() {
+		return instance;
+	}
+	
 }

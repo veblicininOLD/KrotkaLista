@@ -10,19 +10,24 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.SimpleCursorAdapter.CursorToStringConverter;
 
+import com.shortList.app.control.PaymentManager;
 import com.shortList.app.db.DBAdapter;
 import com.shortList.app.model.Event;
 
 public class ParticipantsActivity extends   ListActivity {
+
+    private static final String LOG_TAG = "ParticipantsActivity"; 
 
 	protected DBAdapter myDB = null; 
 	protected SimpleCursorAdapter adapter;
@@ -78,20 +83,20 @@ public class ParticipantsActivity extends   ListActivity {
 		case CREATE_NEW_PARTICIPANT:
 			LayoutInflater factory = LayoutInflater.from(this);
             final View textEntryView = factory.inflate(R.layout.alert_dialog_new_participant, null);
+            final EditText name = (EditText) textEntryView.findViewById(R.id.name_of_new_participant);
             return new AlertDialog.Builder(this)
-             //   .setIconAttribute(android.R.attr.alertDialogIcon)
-                //.setTitle(R.string.alert_dialog_text_entry)
-            .setTitle("dodaj uzytkownika")
+             //   .setIconAttribute(android.R.attr.alertDialogIcon) 
+            .setTitle(R.string.participant_add_new_title)
                 .setView(textEntryView)
-                .setPositiveButton("Tak", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.form_yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-
                         /* User clicked OK so do some stuff */
+                    	//PaymentManager.getInstance().addParticipant(name.getText().toString());
+                    	Log.d(LOG_TAG, String.format("Name of new participant: %s", name.getText().toString()));
                     }
                 })
-                .setNegativeButton("Anuluj", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.form_no, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-
                         /* User clicked cancel so do some stuff */
                     }
                 })

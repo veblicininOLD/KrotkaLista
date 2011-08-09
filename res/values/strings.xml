@@ -13,11 +13,17 @@
     <string name="form_for_what">Za co:</string>
     <string name="form_for_who">Za kogo:</string>
     <string name="form_when">Kiedy:</string>
+    <string name="form_yes">Tak</string>
+    <string name="form_no">Nie</string>
+    <string name="form_cancel">Anuluj</string>
     
     <string name="participants">Uczestnicy</string>
     
     <string name="suggested_participant">Sugerowana osoba:</string>
     
+    
+    
     <string name="participant_add_new">Dodaj</string>
+    <string name="participant_add_new_title">Dodaj osobę:</string> 
     
 </resources>

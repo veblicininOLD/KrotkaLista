@@ -1,5 +1,6 @@
 package com.shortList.app.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Event extends Entity {
@@ -11,6 +12,11 @@ public class Event extends Entity {
 		super(id);
 		this.payments = payments;
 		this.persons = persons;			
+	}
+
+	public Event() {
+		this.payments = new ArrayList<Payment>();
+		this.persons = new ArrayList<Person>();
 	}
 
 	public float calculateDebit(Person person){
@@ -38,4 +44,15 @@ public class Event extends Entity {
 
 		return value;
 	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
+
+	public List<Person> getPersons() {
+		return persons;
+	}
+	
+	
+	
 }

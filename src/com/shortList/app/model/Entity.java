@@ -13,6 +13,8 @@ public class Entity {
 		this.id = id;
 	}
 
+	public Entity() {
+	}
 
 
 }
