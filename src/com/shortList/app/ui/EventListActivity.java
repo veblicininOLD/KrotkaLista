@@ -25,21 +25,21 @@ public class EventListActivity  extends ListActivity {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
-         myDB = new DBAdapter(this);
-        Cursor c = myDB.getEvents();
-        startManagingCursor(c);    
-
-          adapter = new SimpleCursorAdapter(this,
-                android.R.layout.activity_list_item, c, 
-                new String[] { Constants.KEY_EVENT_NAME },
-                new int[] { android.R.id.text1 });
-
-        adapter.setCursorToStringConverter(new CursorToStringConverter() {
-            public CharSequence convertToString(Cursor theCursor) {
-                String number = theCursor.getString(1); 
-                return number ;
-            }
-        }); 
+//         myDB = new DBAdapter(this);
+//        Cursor c = myDB.getEvents();
+//        startManagingCursor(c);    
+//
+//          adapter = new SimpleCursorAdapter(this,
+//                android.R.layout.activity_list_item, c, 
+//                new String[] { Constants.KEY_EVENT_NAME },
+//                new int[] { android.R.id.text1 });
+//
+//        adapter.setCursorToStringConverter(new CursorToStringConverter() {
+//            public CharSequence convertToString(Cursor theCursor) {
+//                String number = theCursor.getString(1); 
+//                return number ;
+//            }
+//        }); 
 
         this.setListAdapter(adapter);
     }    
