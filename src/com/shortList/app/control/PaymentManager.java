@@ -6,8 +6,10 @@ import java.util.Map;
 import com.shortList.app.model.Event;
 import com.shortList.app.model.Person;
 
-public class PaymentManager {
+public class PaymentManager  {
 
+	public static final int NEW_PARTICIPANT = 0;
+	
 	protected Event activeEvent = new Event();
 	//protected List<Event> 
 	
@@ -26,6 +28,14 @@ public class PaymentManager {
 		Map<Person, Float> settlement = new HashMap<Person, Float>();
 
 		return settlement;
+	}
+	
+	public String[] getParticipantNames(){
+		String[] names = new String[activeEvent.getPersons().size()];
+		int i = 0;
+		for(Person p : activeEvent.getPersons())
+			names[i++] = p.getName();
+		return names;
 	}
  
 	public boolean addParticipant(String name){
