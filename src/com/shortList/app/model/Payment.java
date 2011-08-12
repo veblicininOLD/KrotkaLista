@@ -25,6 +25,15 @@ public class Payment extends Entity {
 		this.debtors = debtors;
 		this.description = description;
 	}
+	
+	public Payment(float cash, Date date, Person payer,
+			List<Person> debtors, String description) {		
+		this.cashAmount = cash;
+		this.date = date;
+		this.payer = payer;
+		this.debtors = debtors;
+		this.description = description;
+	}
 
 	public boolean isDebtor(Person person){
 		return debtors.contains(person);		

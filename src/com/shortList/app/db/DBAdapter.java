@@ -37,6 +37,7 @@ public class DBAdapter extends SQLiteOpenHelper {
 	public DBAdapter(Context ctx) { 
 		super(ctx, DATABASE_NAME, null, DATABASE_VERSION); 
 		db = getWritableDatabase();
+	//	clear();
 		db.execSQL(CREATE_TABLE_EVENT);
 		db.execSQL(CREATE_TABLE_PERSON);
 	}
@@ -50,12 +51,12 @@ public class DBAdapter extends SQLiteOpenHelper {
 	}
 	
 	protected void clear() {
-		db.execSQL("drop table " + DATABASE_TABLE_DEBTOR); 
 		db.execSQL("drop table " + DATABASE_TABLE_EVENT); 
-		db.execSQL("drop table " + DATABASE_TABLE_EVENT_PAYMENTS);
-		db.execSQL("drop table " + DATABASE_TABLE_PARTICIPANTS);
-		db.execSQL("drop table " + DATABASE_TABLE_PAYMENT);
 		db.execSQL("drop table " + DATABASE_TABLE_PERSON);
+//		db.execSQL("drop table " + DATABASE_TABLE_DEBTOR); 
+//		db.execSQL("drop table " + DATABASE_TABLE_EVENT_PAYMENTS);
+//		db.execSQL("drop table " + DATABASE_TABLE_PARTICIPANTS);
+//		db.execSQL("drop table " + DATABASE_TABLE_PAYMENT);
 	}
 		
 	@Override

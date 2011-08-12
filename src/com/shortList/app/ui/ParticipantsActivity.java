@@ -1,23 +1,11 @@
 package com.shortList.app.ui;
  
 
-import static com.shortList.app.db.Constants.KEY_USER_NAME;
-import static com.shortList.app.db.Constants.KEY_USER_NAME_POSITION;
-
-import java.util.Observable;
-import java.util.Observer;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,12 +17,10 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.SimpleCursorAdapter.CursorToStringConverter;
 
 import com.shortList.app.control.PaymentManager;
 import com.shortList.app.db.DBAdapter;
 import com.shortList.app.model.Event;
-import com.shortList.app.model.Payment;
  
  
 
@@ -42,7 +28,7 @@ public class ParticipantsActivity extends  ListActivity  {
 
     private static final String LOG_TAG = "ParticipantsActivity"; 
 
-	protected DBAdapter db = null; 
+	protected DBAdapter db; 
 	protected SimpleCursorAdapter adapter;
 	protected PaymentManager pm = PaymentManager.getInstance();
 	

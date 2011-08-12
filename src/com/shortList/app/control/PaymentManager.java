@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 
 import com.shortList.app.db.DBAdapter;
 import com.shortList.app.model.Event;
+import com.shortList.app.model.Payment;
 import com.shortList.app.model.Person;
 
 
@@ -22,6 +23,8 @@ import com.shortList.app.model.Person;
 public class PaymentManager  {
 
 	public static final int NEW_PARTICIPANT = 0;
+	
+	private static final String LOG_TAG = " PaymentManager";
 	
 	protected Event activeEvent = new Event();
 	protected DBAdapter db;
@@ -43,6 +46,7 @@ public class PaymentManager  {
 	public void init(Context context){
 		db = new DBAdapter(context);
 		db.loadEvents();
+		db.close();
 	}
 	
 	public boolean setActiveEvent(long id, SharedPreferences settings ){ 
@@ -93,6 +97,18 @@ public class PaymentManager  {
 	public Event getActiveEvent() {
 		return activeEvent;
 	}
+
+	/**
+	 * add a payment to an active event
+	 * @param payment to add
+	 */
+	public void addPayment(Payment payment) {		
+		activeEvent.getPayments().add(payment);
+	}
 	
+	public void addPayment(Payment payment, Event event) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

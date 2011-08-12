@@ -24,6 +24,7 @@
     
     
     <string name="participant_add_new">Dodaj</string>
-    <string name="participant_add_new_title">Dodaj osobę:</string> 
+    <string name="participant_add_new_title">Dodaj osobę:</string>
+    <string name="form_confirm">Zatwierdź</string> 
     
 </resources>

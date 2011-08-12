@@ -5,6 +5,7 @@ import com.shortList.app.control.PaymentManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,6 +14,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class EventActivity extends Activity {
+
+	private static final String LOG_TAG = "EventActivity";
 
 	protected Button newPaymentButton;
 	protected PaymentManager pm ;
@@ -34,6 +37,7 @@ public class EventActivity extends Activity {
 		});
 		pm = PaymentManager.getInstance(); 
 		pm.init(getApplicationContext());
+		Log.d(LOG_TAG, "start");
 	}
 
 	@Override
