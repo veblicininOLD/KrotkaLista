@@ -1,5 +1,7 @@
 package com.shortList.app.ui;
 
+import com.shortList.app.control.PaymentManager;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.widget.Button;
 public class EventActivity extends Activity {
 
 	protected Button newPaymentButton;
+	protected PaymentManager pm ;
 
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,8 @@ public class EventActivity extends Activity {
 				startActivityForResult(i, 0);
 			}
 		});
+		pm = PaymentManager.getInstance(); 
+		pm.init(getApplicationContext());
 	}
 
 	@Override

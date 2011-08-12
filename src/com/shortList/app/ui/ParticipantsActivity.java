@@ -7,16 +7,19 @@ import static com.shortList.app.db.Constants.KEY_USER_NAME_POSITION;
 import java.util.Observable;
 import java.util.Observer;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,12 +36,13 @@ import com.shortList.app.db.DBAdapter;
 import com.shortList.app.model.Event;
 import com.shortList.app.model.Payment;
  
+ 
 
 public class ParticipantsActivity extends  ListActivity  {
 
     private static final String LOG_TAG = "ParticipantsActivity"; 
 
-	protected DBAdapter myDB = null; 
+	protected DBAdapter db = null; 
 	protected SimpleCursorAdapter adapter;
 	protected PaymentManager pm = PaymentManager.getInstance();
 	
@@ -62,12 +66,9 @@ public class ParticipantsActivity extends  ListActivity  {
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         Event event = null;
-         myDB = new DBAdapter(this);
-        Cursor c = myDB.getParticipants(event);
-        startManagingCursor(c);   
-        
-        
-
+         db = new DBAdapter(this);
+//        Cursor c = db.getParticipants(event);
+//        startManagingCursor(c);   
 //          adapter = new SimpleCursorAdapter(this,
 //                android.R.layout.activity_list_item, c, 
 //                new String[] { KEY_USER_NAME },
@@ -155,9 +156,21 @@ public class ParticipantsActivity extends  ListActivity  {
 		}
 	}
 	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		   if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+		        Log.d(LOG_TAG, "Back button pressed: " + keyCode + ", " + event);		        
+		        db.saveParticipants(pm.getActiveEvent());
+		   }
+		return super.onKeyDown(keyCode, event);      
+		       
+	}
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
+		//TODO przed usunieciem sprawdzic czy sa dla tej osoby wpisy
+		
+		
 //		Log.d(LOG_TAG, "clicked:" +  ((SQLiteCursor)adapter.getItem(position)).getString(DBAdapter.KEY_URL_POSITION) + " id:" + id + " position: " + position);
 //		super.onListItemClick(l, v, position, id);		
 //		Bundle bun = new Bundle(); 				

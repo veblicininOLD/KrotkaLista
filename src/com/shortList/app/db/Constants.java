@@ -8,11 +8,11 @@ public class Constants {
 	
 	public static final String KEY_ROWID = "_id";
 	public static final String KEY_EVENT_ID = "event_id";
-	public static final String KEY_CASH = "cash";
-	public static final String KEY_DATE = "date";
-	public static final String KEY_DESCRIPTION = "description";
-	public static final String KEY_PAYER = "payer";
-	public static final String KEY_NAME = "name";
+	public static final String KEY_PAYMENT_CASH = "cash";
+	public static final String KEY_PAYMENT_DATE = "date";
+	public static final String KEY_PAYMENT_DESCRIPTION = "description";
+	public static final String KEY_PAYMENT_PAYER = "payer";
+	public static final String KEY_PAYMENT_NAME = "name";
 	
 	public static final String DATABASE_TABLE_PERSON = "person";
 	public static final String DATABASE_TABLE_EVENT = "event";
@@ -23,7 +23,7 @@ public class Constants {
 	
 	protected static final String CREATE_TABLE_PERSON = "create table if not exists " + DATABASE_TABLE_PERSON + 
 	" ("+ KEY_ROWID 	+ " integer primary key autoincrement, " + 
-	KEY_EVENT_ID + " long not null, " + KEY_NAME + " text not null " +
+	KEY_EVENT_ID + " long not null, " + KEY_PAYMENT_NAME + " text not null " +
 	")";
 	
 	protected static final String CREATE_TABLE_EVENT = "create table if not exists " + DATABASE_TABLE_EVENT + 

@@ -3,20 +3,56 @@ package com.shortList.app.control;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.shortList.app.db.DBAdapter;
 import com.shortList.app.model.Event;
 import com.shortList.app.model.Person;
 
+
+/**
+ * Class responsible for operations on events and payments.
+ * 
+ * Pointer for an active event is stored in shared preferences.
+ * 
+ * @author wojtek
+ *
+ */
 public class PaymentManager  {
 
 	public static final int NEW_PARTICIPANT = 0;
 	
 	protected Event activeEvent = new Event();
+	protected DBAdapter db;
 	//protected List<Event> 
 	
 	private static final PaymentManager instance = new PaymentManager();
 
+	private static final String PREFERENCE_ACTIVE_EVENT = "active_event";
+
 	public PaymentManager() {
 		// load all from database
+	}
+	
+	/**
+	 * This method have to be called before using class PaymentManger
+	 * TODO: make it better
+	 * @param context of application using PaymentManager
+	 */
+	public void init(Context context){
+		db = new DBAdapter(context);
+		db.loadEvents();
+	}
+	
+	public boolean setActiveEvent(long id, SharedPreferences settings ){ 
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putLong(PREFERENCE_ACTIVE_EVENT, id);		 
+		return editor.commit();
+	}
+	
+	public void finish(){
+		db.close();
 	}
 	
 	/** account the event
@@ -53,5 +89,10 @@ public class PaymentManager  {
 	public static PaymentManager getInstance() {
 		return instance;
 	}
+
+	public Event getActiveEvent() {
+		return activeEvent;
+	}
+	
 	
 }
