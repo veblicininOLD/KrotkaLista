@@ -25,6 +25,10 @@
     
     <string name="participant_add_new">Dodaj</string>
     <string name="participant_add_new_title">Dodaj osobę:</string>
-    <string name="form_confirm">Zatwierdź</string> 
+    <string name="form_confirm">Zatwierdź</string>
+    <string name="button_show_payments">Pokaż płatności</string>
+    <string name="form_what_for_hint">Za co płatność</string>
+    <string name="form_amount_default">0.00zł</string>
+    <string name="form_debtors">Dłużnicy</string> 
     
 </resources>

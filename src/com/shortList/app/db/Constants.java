@@ -30,6 +30,12 @@ public class Constants {
 	" ("+ KEY_ROWID 	+ " integer primary key autoincrement " +  
 	")";
 	
+	protected static final String CREATE_TABLE_PAYMENT = "create table if not exists " + DATABASE_TABLE_PAYMENT + 
+	" ("+ KEY_ROWID 	+ " integer primary key autoincrement, " +  
+	KEY_PAYMENT_CASH + " float not null, " + KEY_PAYMENT_DATE + " long not null, " +
+	KEY_PAYMENT_DESCRIPTION + " text, " + KEY_PAYMENT_PAYER + " long not null" +
+	")";
+	
 //	protected static final String CREATE_TABLE_PERSON = "create table if not exists " + DATABASE_TABLE_DAILY_REPORTS +
 //	" ("+ KEY_ROWID 	+ " integer primary key autoincrement, " + 
 //	KEY_GAME_ID + " long not null, " + KEY_DAILY_REPORT_DAY + "  long not null, " +

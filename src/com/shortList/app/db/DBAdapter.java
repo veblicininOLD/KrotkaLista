@@ -1,18 +1,6 @@
 package com.shortList.app.db;
- 
-import static com.shortList.app.db.Constants.CREATE_TABLE_EVENT;
-import static com.shortList.app.db.Constants.CREATE_TABLE_PERSON;
-import static com.shortList.app.db.Constants.DATABASE_NAME;
-import static com.shortList.app.db.Constants.DATABASE_TABLE_DEBTOR;
-import static com.shortList.app.db.Constants.DATABASE_TABLE_EVENT;
-import static com.shortList.app.db.Constants.DATABASE_TABLE_EVENT_PAYMENTS;
-import static com.shortList.app.db.Constants.DATABASE_TABLE_PARTICIPANTS;
-import static com.shortList.app.db.Constants.DATABASE_TABLE_PAYMENT;
-import static com.shortList.app.db.Constants.DATABASE_TABLE_PERSON;
-import static com.shortList.app.db.Constants.DATABASE_VERSION;
-import static com.shortList.app.db.Constants.KEY_EVENT_ID;
-import static com.shortList.app.db.Constants.KEY_ROWID;
-import static com.shortList.app.db.Constants.KEY_USER_NAME;
+  
+import static com.shortList.app.db.Constants.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +28,7 @@ public class DBAdapter extends SQLiteOpenHelper {
 	//	clear();
 		db.execSQL(CREATE_TABLE_EVENT);
 		db.execSQL(CREATE_TABLE_PERSON);
+		db.execSQL(CREATE_TABLE_PAYMENT);
 	}
 	
 	
@@ -48,15 +37,16 @@ public class DBAdapter extends SQLiteOpenHelper {
 		Log.d(LOG_TAG, "onCreate");
 		db.execSQL(CREATE_TABLE_EVENT);
 		db.execSQL(CREATE_TABLE_PERSON);
+		db.execSQL(CREATE_TABLE_PAYMENT);
 	}
 	
 	protected void clear() {
 		db.execSQL("drop table " + DATABASE_TABLE_EVENT); 
 		db.execSQL("drop table " + DATABASE_TABLE_PERSON);
+		db.execSQL("drop table " + DATABASE_TABLE_PAYMENT);
 //		db.execSQL("drop table " + DATABASE_TABLE_DEBTOR); 
 //		db.execSQL("drop table " + DATABASE_TABLE_EVENT_PAYMENTS);
 //		db.execSQL("drop table " + DATABASE_TABLE_PARTICIPANTS);
-//		db.execSQL("drop table " + DATABASE_TABLE_PAYMENT);
 	}
 		
 	@Override
@@ -131,7 +121,7 @@ public class DBAdapter extends SQLiteOpenHelper {
 	 * load list of saved events in database
 	 * @return list of all events
 	 */
-	public ArrayList<Event> loadEvents(){
+	public ArrayList<Event> load(){
 		ArrayList<Event> list = new ArrayList<Event>(); 
 		Cursor eventCursor = db.query(true, DATABASE_TABLE_EVENT, new String[] {
 				KEY_ROWID,    }, 
@@ -161,5 +151,41 @@ public class DBAdapter extends SQLiteOpenHelper {
 	@Override
 	public synchronized void close() {		
 		super.close();
+	}
+
+
+	public long createNewEvent() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+ 
+
+	public long savePayment(Payment payment, Event event) {
+		if (event == null){
+			Log.e(LOG_TAG, "No active event!");
+			return -1;
+		} else if (payment.getPayer() == null){
+			Log.e(LOG_TAG, "No payer!");
+			return -1;
+		}
+			
+		
+		long retCode = -1;
+		ContentValues initialValues = new ContentValues(); 
+		initialValues.put(KEY_EVENT_ID, event.getId());
+	 
+		initialValues.put(KEY_PAYMENT_CASH, payment.getCashAmount());
+		initialValues.put(KEY_PAYMENT_DATE, payment.getDate().getTime());
+		initialValues.put(KEY_PAYMENT_DESCRIPTION, payment.getDescription());		
+		initialValues.put(KEY_PAYMENT_PAYER, payment.getPayer().getId());
+		
+		//TODO
+		// save debtors
+		
+		retCode = db.insert(DATABASE_TABLE_PAYMENT, null, initialValues);	
+		Log.d(LOG_TAG, String.format(
+				"Saving Payment %d (%s); DBCode: %d", payment.getCashAmount(), payment.getDescription(), retCode));
+		return retCode;
+		
 	}
 }

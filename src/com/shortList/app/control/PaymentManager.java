@@ -1,10 +1,12 @@
 package com.shortList.app.control;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.shortList.app.db.DBAdapter;
 import com.shortList.app.model.Event;
@@ -28,14 +30,15 @@ public class PaymentManager  {
 	
 	protected Event activeEvent = new Event();
 	protected DBAdapter db;
-	//protected List<Event> 
+	protected List<Event> events; 
 	
 	private static final PaymentManager instance = new PaymentManager();
 
 	private static final String PREFERENCE_ACTIVE_EVENT = "active_event";
+	private static final String PREFS_NAME = "ShortListPrefs";
 
-	public PaymentManager() {
-		// load all from database
+
+	public PaymentManager() { 
 	}
 	
 	/**
@@ -45,8 +48,34 @@ public class PaymentManager  {
 	 */
 	public void init(Context context){
 		db = new DBAdapter(context);
-		db.loadEvents();
+		List<Event> events =  db.load();
+		
+		/**  if in database doesn't exists any saved game, 
+		 *   the new event is created and set as an active event */
+		if(events.size() == 0){
+			long id = db.createNewEvent();
+			setActiveEvent(id, context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE));
+		}else{
+			this.events = events;
+			SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+			long activeEventId = settings.getLong(PREFERENCE_ACTIVE_EVENT, -1);
+			this.activeEvent = findEventById(activeEventId);
+		}
+			
 		db.close();
+	}
+	
+	/**
+	 * find an event by a given id
+	 * @param id of an event
+	 * @return null if an event not found
+	 */
+	public Event findEventById(long id){
+		for(Event e : events)
+			if (e.getId() == id)
+				return e;
+		Log.d(LOG_TAG, String.format("Event for id: %d not found!", id));
+		return null;
 	}
 	
 	public boolean setActiveEvent(long id, SharedPreferences settings ){ 

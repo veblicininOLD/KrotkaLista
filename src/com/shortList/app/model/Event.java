@@ -53,6 +53,16 @@ public class Event extends Entity {
 		return persons;
 	}
 	
+	@Override
+	public int hashCode() {
+		return payments.size();
+	}
 	
-	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Event))
+			return false;
+		else
+			return (((Event ) o).getId() == this.getId());
+	}
 }
