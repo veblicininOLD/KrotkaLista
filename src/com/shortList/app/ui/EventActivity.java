@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class EventActivity extends Activity {
 
@@ -24,23 +25,37 @@ public class EventActivity extends Activity {
 	
 	protected PaymentManager pm ;
 
+	private Button accountEventButton;
 
+	private void showCalculations(){
+		Toast toast =  Toast.makeText(this, "aaa", Toast.LENGTH_LONG); 
+		toast.show();
+	} 
 
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event);
 
-		showPaymentsButton = (Button) findViewById(R.id.show_payments);
-		showPaymentsButton.setOnClickListener(new OnClickListener() {
+		accountEventButton = (Button) findViewById(R.id.account_event);
+		accountEventButton.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(getApplicationContext(),
-						PaymentsListActivity.class);
-				// Bundle b = new Bundle();
-				startActivityForResult(i, 0);
+			public void onClick(View v) {  
+				showCalculations();
 			}
 		});
+		
+		  
+		showPaymentsButton = (Button) findViewById(R.id.show_payments_btn);
+		showPaymentsButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) { 
+				startActivity(new Intent(getApplicationContext(),
+						PaymentsListActivity.class));
+			}
+		});
+		
+		
 		newPaymentButton = (Button) findViewById(R.id.new_payment);
 		newPaymentButton.setOnClickListener(new OnClickListener() {
 			@Override

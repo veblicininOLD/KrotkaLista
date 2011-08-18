@@ -100,6 +100,42 @@ public class PaymentManager  {
 		return settlement;
 	}
 	
+	protected float getBalanceByPerson(Person person){
+		return getBalanceByPersonByEvent(activeEvent,  person);
+	}
+		
+	protected float getBalanceByPersonByEvent(Event event, Person person){
+		return getExpensensByPersonByEvent(event, person) - getDebitForEvent(event, person);
+	}
+	
+	protected Map<Person, Float> summarize(Event event){
+		Map<Person, Float> results = new HashMap<Person, Float>();
+		
+		for(Person p : event.getPersons()){
+			results.put(p, getBalanceByPersonByEvent(event, p));
+			Log.d(LOG_TAG, String.format("Person %s has to pay %f$.", p.getName(), results.get(p)));
+		}
+		
+		return results;
+	}
+	
+	protected Map<Person, Float> summarize(){
+		return summarize(activeEvent);
+	}
+	
+	protected float getExpensensByPerson(Person person){
+		return getExpensensByPersonByEvent(activeEvent, person);
+	}
+	
+	private float getExpensensByPersonByEvent(Event event, Person person){
+		float sum = 0;
+		for(Payment p : event.getPayments()){
+			if (p.getPayer().equals(person))
+				sum += p.getCashAmount();
+		}		
+		return sum;
+	}
+	
 	public String[] getParticipantNames(){
 		String[] names = new String[activeEvent.getPersons().size()];
 		int i = 0;

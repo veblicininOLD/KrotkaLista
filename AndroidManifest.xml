@@ -13,34 +13,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    	<activity android:name="com.shortList.app.ui.PaymentActivity"
+        <activity android:name=".PaymentsListActivity"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Light">                  	
-                  <!-- android:theme="@android:style/Theme.NoTitleBar" -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        
-        	<activity android:name="com.shortList.app.ui.ParticipantsActivity"
+                  android:theme="@android:style/Theme.Light">          
+        </activity>  
+    	<activity android:name=".PaymentActivity"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Light">                  	
-                  <!-- android:theme="@android:style/Theme.NoTitleBar" -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        
-        	<activity android:name="com.shortList.app.ui.EventListActivity"
+                  android:theme="@android:style/Theme.Light">          
+        </activity>        
+        <activity android:name=".ParticipantsActivity"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Light">                  	
-                  <!-- android:theme="@android:style/Theme.NoTitleBar" -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                  android:theme="@android:style/Theme.Light">                   
+        </activity>        
+        <activity android:name=".EventListActivity"
+                  android:label="@string/app_name"
+                  android:theme="@android:style/Theme.Light">   
         </activity>
         
     </application>

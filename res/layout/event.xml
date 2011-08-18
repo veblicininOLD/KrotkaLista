@@ -12,12 +12,12 @@
     </LinearLayout>
     
     <Button android:layout_width="match_parent" android:text="@string/button_new_payment" android:layout_height="wrap_content" android:id="@+id/new_payment"></Button>
-    <Button android:layout_height="wrap_content" android:text="@string/button_account_payment" android:id="@+id/button2" android:layout_width="match_parent"></Button>
-    <Button android:id="@+id/button1" android:layout_height="wrap_content" android:text="@string/button_show_payments" android:layout_width="match_parent"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/button_account_payment" android:layout_width="match_parent" android:id="@+id/account_event"></Button>
+    <Button android:layout_height="wrap_content" android:text="@string/button_show_payments" android:layout_width="match_parent" android:id="@+id/show_payments_btn"></Button>
     
     <TextView android:layout_width="match_parent" android:id="@+id/textView1" android:layout_height="wrap_content" android:text="@string/suggested_participant"></TextView>
     <TextView android:layout_width="match_parent" android:id="@+id/suggested_person" android:layout_height="wrap_content" android:text="@string/anyone"></TextView>
   
- 
+   
   
 </LinearLayout>
