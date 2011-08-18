@@ -15,11 +15,14 @@
     <string name="form_when">Kiedy:</string>
     <string name="form_yes">Tak</string>
     <string name="form_no">Nie</string>
+    <string name="form_ok">Ok</string>
     <string name="form_cancel">Anuluj</string>
     
     <string name="participants">Uczestnicy</string>
+    <string name="debtors">Dłużnicy</string>
     
     <string name="suggested_participant">Sugerowana osoba:</string>
+    <string name="anyone">Ktokolwiek</string>
     
     
     

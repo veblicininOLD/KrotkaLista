@@ -1,5 +1,6 @@
 package com.shortList.app.control;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,5 +140,52 @@ public class PaymentManager  {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public List<Person> getPersonsFromNames(List<String> debtors) {
+		List<Person> persons = new ArrayList<Person>();
+		for (String debtor : debtors){
+			persons.add(findPersonByName(debtor));
+		}
+		return persons;
+	}
 	
+	public Person findPersonByName(String name){
+		for(Person p : activeEvent.getPersons()){
+			if (p.getName().equals(name))
+				return p;
+		}
+		return null;
+	}
+
+	private float getDebit(Person person){
+		return getDebitForEvent(activeEvent, person);
+	}
+	
+	
+	
+	private float getDebitForEvent(Event event, Person person){
+		float sum = 0;
+		for(Payment p : event.getPayments()){
+			if (p.isDebtor(person))
+				sum += p.getCashAmountProPerson();
+		}			
+		return sum;
+	}
+	public Person getSuggestedPerson() {
+		return  getSuggestedPersonFromEvent(activeEvent);
+	}
+	
+	public Person getSuggestedPersonFromEvent(Event event) {
+		Person person = null;
+		float max = 0.0f;
+		float temp;
+		for (Person p : event.getPersons()){
+			temp = getDebitForEvent(event, p);
+			if (temp > max){
+				person = p;
+				temp = max;
+			}
+		}
+		return person;
+	}
 }

@@ -1,5 +1,6 @@
 package com.shortList.app.ui;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,13 +28,17 @@ import android.widget.Spinner;
 public class PaymentActivity extends Activity {
 		
 	private static final String LOG_TAG = "PaymentActivity";
+	PaymentManager pm;
 	
 	protected EditText amount;
 	protected DatePicker date;
 	protected Spinner payer;
+	protected List<String> debtors;
 
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
+		pm = PaymentManager.getInstance();
+		debtors =  new ArrayList<String>();
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.new_payment); 
 
@@ -84,14 +89,13 @@ public class PaymentActivity extends Activity {
 			cash = 0.0f;
 		}
 		Date date = new Date(1000L);
-		Person payer = null;
-		List<Person> debtors = null;
+		Person payer = null; 
 		String description = null;
 		
 		Log.d(LOG_TAG, String.format( "creating a new payment (cash: %f)", cash));
+	
+		Payment p = new Payment(cash, date, payer, pm.getPersonsFromNames(debtors), description);
 		
-		Payment p = new Payment(cash, date, payer, debtors, description);
-		PaymentManager pm = PaymentManager.getInstance(); 
 		pm.addPayment(p);
 		
 		// TODO: opening and closing db in a main activity?	
@@ -101,18 +105,18 @@ public class PaymentActivity extends Activity {
 		
 		return p;
 	}
-	/** test stuff **/
-	protected CharSequence[] _options = { "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune" };
-	protected boolean[] _selections =  new boolean[ _options.length ];
+	/** test stuff **/ 
+	protected String[] options =  pm.getParticipantNames(); 
+	protected boolean[] selections =  new boolean[ options.length ];
 	
 	@Override
 	protected Dialog onCreateDialog( int id ) 
 	{
 		return 
 		new AlertDialog.Builder( this )
-        	.setTitle( "Planets" )
-        	.setMultiChoiceItems( _options, _selections, new DialogSelectionClickHandler() )
-        	.setPositiveButton( "OK", new DialogButtonClickHandler() )
+        	.setTitle( R.string.debtors )
+        	.setMultiChoiceItems( options, selections, new DialogSelectionClickHandler() )
+        	.setPositiveButton( R.string.form_ok, new DialogButtonClickHandler() )
         	.create();
 	}
 	
@@ -121,10 +125,19 @@ public class PaymentActivity extends Activity {
 	{
 		public void onClick( DialogInterface dialog, int clicked, boolean selected )
 		{
-			Log.i( "ME", _options[ clicked ] + " selected: " + selected );
+			Log.d( LOG_TAG, options[ clicked ] + " selected: " + selected );
 		}
 	}
 	
+	private void addDebtors(){
+		for( int i = 0; i < options.length; i++ ){
+			Log.d( LOG_TAG, options[ i ] + " selected: " + selections[i] );
+			debtors.clear();
+			if (selections[i] == true){
+				debtors.add(options[i]);
+			}
+		}
+	}
 
 	public class DialogButtonClickHandler implements DialogInterface.OnClickListener
 	{
@@ -133,15 +146,11 @@ public class PaymentActivity extends Activity {
 			switch( clicked )
 			{
 				case DialogInterface.BUTTON_POSITIVE:
-					printSelectedPlanets();
+					addDebtors();
 					break;
 			}
 		}
 	}
 	
-	protected void printSelectedPlanets(){
-		for( int i = 0; i < _options.length; i++ ){
-			Log.i( "ME", _options[ i ] + " selected: " + _selections[i] );
-		}
-	}
+ 
 }

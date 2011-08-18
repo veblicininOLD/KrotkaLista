@@ -55,6 +55,9 @@ public class Payment extends Entity {
 		return cashAmount;
 	} 
 
+	public float getCashAmountProPerson() {
+		return cashAmount / debtors.size();
+	} 
 
 
 }

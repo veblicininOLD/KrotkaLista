@@ -12,19 +12,35 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class EventActivity extends Activity {
 
 	private static final String LOG_TAG = "EventActivity";
 
 	protected Button newPaymentButton;
+	protected TextView suggestedPerson;
+	protected Button showPaymentsButton;
+	
 	protected PaymentManager pm ;
+
+
 
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event);
 
+		showPaymentsButton = (Button) findViewById(R.id.show_payments);
+		showPaymentsButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getApplicationContext(),
+						PaymentsListActivity.class);
+				// Bundle b = new Bundle();
+				startActivityForResult(i, 0);
+			}
+		});
 		newPaymentButton = (Button) findViewById(R.id.new_payment);
 		newPaymentButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -37,6 +53,12 @@ public class EventActivity extends Activity {
 		});
 		pm = PaymentManager.getInstance(); 
 		pm.init(getApplicationContext());
+		
+		suggestedPerson = (TextView) findViewById(R.id.suggested_person);
+		if (pm.getSuggestedPerson() != null)
+			suggestedPerson.setText(pm.getSuggestedPerson().getName());
+		else
+			suggestedPerson.setText(R.string.anyone);
 		Log.d(LOG_TAG, "start");
 	}
 
