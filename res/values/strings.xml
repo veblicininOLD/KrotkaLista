@@ -34,4 +34,5 @@
     <string name="form_amount_default">0.00zł</string>
     <string name="form_debtors">Dłużnicy</string> 
     
+    <string name="warning_no_participant">Nie można dodać nowej płatności! Najpierw dodaj współtowarzyszy wycieczki.</string>
 </resources>

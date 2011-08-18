@@ -1,6 +1,6 @@
 package com.shortList.app.ui;
 
-import com.shortList.app.control.PaymentManager;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +15,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.shortList.app.control.PaymentManager;
+import com.shortList.app.model.Person;
+
 public class EventActivity extends Activity {
 
 	private static final String LOG_TAG = "EventActivity";
@@ -28,7 +31,13 @@ public class EventActivity extends Activity {
 	private Button accountEventButton;
 
 	private void showCalculations(){
-		Toast toast =  Toast.makeText(this, "aaa", Toast.LENGTH_LONG); 
+		Map<Person, Float> saldos = pm.summarize();
+		StringBuilder sb = new StringBuilder();
+		for(Person p : saldos.keySet())
+			sb.append( p.getName() + " " + saldos.get(p) + "\n" );
+		
+		
+		Toast toast =  Toast.makeText(this, sb.toString(), Toast.LENGTH_LONG); 
 		toast.show();
 	} 
 
@@ -50,7 +59,11 @@ public class EventActivity extends Activity {
 		showPaymentsButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) { 
-				startActivity(new Intent(getApplicationContext(),
+				if (pm.getActiveEvent().getPersons().size() <= 0){
+					Toast toast =  Toast.makeText(getApplicationContext(), R.string.warning_no_participant, Toast.LENGTH_LONG); 
+					toast.show();
+				}else				
+					startActivity(new Intent(getApplicationContext(),
 						PaymentsListActivity.class));
 			}
 		});

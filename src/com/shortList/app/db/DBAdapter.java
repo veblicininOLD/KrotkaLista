@@ -111,7 +111,7 @@ public class DBAdapter extends SQLiteOpenHelper {
 		initialValues.put(KEY_EVENT_ID, event.getId());
 	 
 		initialValues.put(KEY_USER_NAME, p.getName()); 	 		 		 
-		retCode = db.insert(DATABASE_TABLE_EVENT, null, initialValues);	
+		retCode = db.insert(DATABASE_TABLE_PARTICIPANTS, null, initialValues);	
 		Log.d(LOG_TAG, String.format(
 				"Saving Participant (%s); DBCode: %d", p.getName(), retCode));
 		return retCode;

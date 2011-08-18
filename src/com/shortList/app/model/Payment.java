@@ -3,7 +3,7 @@ package com.shortList.app.model;
 import java.util.Date;
 import java.util.List;
 
-public class Payment extends Entity {
+public class Payment extends Entity implements Comparable<Payment>{
 
 	/** cash value of a payment **/
 	private float cashAmount;
@@ -57,6 +57,11 @@ public class Payment extends Entity {
 
 	public float getCashAmountProPerson() {
 		return cashAmount / debtors.size();
+	}
+
+	@Override
+	public int compareTo(Payment another) { 		
+		return this.date.compareTo(another.getDate());
 	} 
 
 

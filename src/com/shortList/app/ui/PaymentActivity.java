@@ -4,16 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.shortList.app.control.PaymentManager;
-import com.shortList.app.db.DBAdapter;
-import com.shortList.app.model.Payment;
-import com.shortList.app.model.Person;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,6 +19,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.shortList.app.control.PaymentManager;
+import com.shortList.app.db.DBAdapter;
+import com.shortList.app.model.Payment;
+import com.shortList.app.model.Person;
+
 public class PaymentActivity extends Activity {
 		
 	private static final String LOG_TAG = "PaymentActivity";
@@ -34,10 +33,15 @@ public class PaymentActivity extends Activity {
 	protected DatePicker date;
 	protected Spinner payer;
 	protected List<String> debtors;
+	protected String[] options;
+	protected boolean[] selections ;
 
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
-		pm = PaymentManager.getInstance();
+		pm = PaymentManager.getInstance();		
+		options =  pm.getParticipantNames(); 
+		selections =  new boolean[ options.length ];		
+		
 		debtors =  new ArrayList<String>();
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.new_payment); 
@@ -105,9 +109,7 @@ public class PaymentActivity extends Activity {
 		
 		return p;
 	}
-	/** test stuff **/ 
-	protected String[] options =  pm.getParticipantNames(); 
-	protected boolean[] selections =  new boolean[ options.length ];
+
 	
 	@Override
 	protected Dialog onCreateDialog( int id ) 
@@ -139,17 +141,14 @@ public class PaymentActivity extends Activity {
 		}
 	}
 
-	public class DialogButtonClickHandler implements DialogInterface.OnClickListener
-	{
-		public void onClick( DialogInterface dialog, int clicked )
-		{
-			switch( clicked )
-			{
+	public class DialogButtonClickHandler implements DialogInterface.OnClickListener{
+		public void onClick( DialogInterface dialog, int clicked ){
+			switch( clicked ){
 				case DialogInterface.BUTTON_POSITIVE:
 					addDebtors();
 					break;
 			}
-		}
+		}  
 	}
 	
  

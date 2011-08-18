@@ -119,7 +119,7 @@ public class PaymentManager  {
 		return results;
 	}
 	
-	protected Map<Person, Float> summarize(){
+	public Map<Person, Float> summarize(){
 		return summarize(activeEvent);
 	}
 	
