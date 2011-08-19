@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.shortList.app.control.PaymentManager;
 import com.shortList.app.db.DBAdapter;
@@ -31,15 +32,17 @@ public class PaymentActivity extends Activity {
 	
 	protected EditText amount;
 	protected DatePicker date;
-	protected Spinner payer;
+	protected Spinner payerField;
 	protected List<String> debtors;
 	protected String[] options;
 	protected boolean[] selections ;
+	protected EditText descriptionField;
+	private Button debtorsButton;
 
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
 		pm = PaymentManager.getInstance();		
-		options =  pm.getParticipantNames(); 
+		options = pm.getParticipantNames(); 
 		selections =  new boolean[ options.length ];		
 		
 		debtors =  new ArrayList<String>();
@@ -48,15 +51,16 @@ public class PaymentActivity extends Activity {
 
 	      amount =  (EditText) findViewById(R.id.new_payment_how_much);
 	      date =  (DatePicker) findViewById(R.id.new_payment_when);
-	      payer =  (Spinner) findViewById(R.id.new_payment_who);
-	  
+	      payerField =  (Spinner) findViewById(R.id.new_payment_who);
+	      descriptionField =  (EditText) findViewById(R.id.new_payment_for_what);
+
 	      
 	      String[] items =  PaymentManager.getInstance().getParticipantNames(); 
 
 	      ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 	              android.R.layout.simple_spinner_item, items);
 	      adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	      payer.setAdapter(adapter);
+	      payerField.setAdapter(adapter);
 	    
 	    Button confirmButton = (Button) findViewById(R.id.form_confirm_new_payment);
 	    confirmButton.setOnClickListener(new OnClickListener() {
@@ -65,13 +69,25 @@ public class PaymentActivity extends Activity {
 //				Intent i = new Intent(getApplicationContext(),
 //						PaymentActivity.class); 
 //				startActivityForResult(i, 0); 
-		
+				
+				
 				Payment payment = createAndSaveNewPayment();
 				//showDialog(0);
 				finish();
 			}
 	
 		});
+	    
+	    debtorsButton = (Button) findViewById(R.id.new_payment_debtors);
+	    debtorsButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) { 
+				Log.d(LOG_TAG, "click");
+				showDialog(0);				
+			}
+	
+		});
+	    
 	}
 	
 	
@@ -92,13 +108,27 @@ public class PaymentActivity extends Activity {
 			Log.e(LOG_TAG, "Number format exception in cash amount");
 			cash = 0.0f;
 		}
-		Date date = new Date(1000L);
-		Person payer = null; 
-		String description = null;
+		Date date = new Date(1000L);		 
+		 
+		Person payer = pm.findPersonByName(((String) payerField.getSelectedItem())); 
+		String description = descriptionField.getText().toString();		
+	
+		for(boolean b : selections){
+			
+		}
+		
+		List<Person> paymentDebtors = pm.getPersonsFromNames(debtors);
+		if (paymentDebtors.size() == 0){
+			Toast toast =  Toast.makeText(getApplicationContext(), R.string.warning_no_debtor, Toast.LENGTH_LONG); 
+			toast.show();
+			return null;
+		}
 		
 		Log.d(LOG_TAG, String.format( "creating a new payment (cash: %f)", cash));
 	
-		Payment p = new Payment(cash, date, payer, pm.getPersonsFromNames(debtors), description);
+		
+		
+		Payment p = new Payment(cash, date, payer, paymentDebtors, description);
 		
 		pm.addPayment(p);
 		
@@ -113,7 +143,7 @@ public class PaymentActivity extends Activity {
 	
 	@Override
 	protected Dialog onCreateDialog( int id ) 
-	{
+	{		
 		return 
 		new AlertDialog.Builder( this )
         	.setTitle( R.string.debtors )
@@ -132,9 +162,9 @@ public class PaymentActivity extends Activity {
 	}
 	
 	private void addDebtors(){
+		debtors.clear();
 		for( int i = 0; i < options.length; i++ ){
 			Log.d( LOG_TAG, options[ i ] + " selected: " + selections[i] );
-			debtors.clear();
 			if (selections[i] == true){
 				debtors.add(options[i]);
 			}

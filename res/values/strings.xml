@@ -35,4 +35,7 @@
     <string name="form_debtors">Dłużnicy</string> 
     
     <string name="warning_no_participant">Nie można dodać nowej płatności! Najpierw dodaj współtowarzyszy wycieczki.</string>
+    <string name="warning_no_debtor">Nie można dodać nowej płatności! Najpierw dodaj dłużnika.</string>
+    
 </resources>
+

@@ -11,36 +11,42 @@ public class Constants {
 	public static final String KEY_PAYMENT_CASH = "cash";
 	public static final String KEY_PAYMENT_DATE = "date";
 	public static final String KEY_PAYMENT_DESCRIPTION = "description";
-	public static final String KEY_PAYMENT_PAYER = "payer";
-	public static final String KEY_PAYMENT_NAME = "name";
+	public static final String KEY_PAYMENT_PAYER = "payer"; 
+	
+	public static final String KEY_DEBTOR_PAYMENT_ID = "payment_id";
+	public static final String KEY_DEBTOR_DEBTOR_ID = "debtor_id";
+	public static final String KEY_DEBTOR_EVENT_ID = "event_id";
+	//public static final String KEY_DEBTOR_ = "";
 	
 	public static final String DATABASE_TABLE_PERSON = "person";
 	public static final String DATABASE_TABLE_EVENT = "event";
 	public static final String DATABASE_TABLE_PAYMENT = "payment";
 	public static final String DATABASE_TABLE_DEBTOR = "debtor";
-	public static final String DATABASE_TABLE_PARTICIPANTS = "participants";
 	public static final String DATABASE_TABLE_EVENT_PAYMENTS = "event_payments";
+	
+	
 	
 	protected static final String CREATE_TABLE_PERSON = "create table if not exists " + DATABASE_TABLE_PERSON + 
 	" ("+ KEY_ROWID 	+ " integer primary key autoincrement, " + 
-	KEY_EVENT_ID + " long not null, " + KEY_PAYMENT_NAME + " text not null " +
+	KEY_EVENT_ID + " long not null, " + KEY_USER_NAME + " text not null " +
 	")";
 	
 	protected static final String CREATE_TABLE_EVENT = "create table if not exists " + DATABASE_TABLE_EVENT + 
-	" ("+ KEY_ROWID 	+ " integer primary key autoincrement " +  
+	" ("+ KEY_ROWID + " integer primary key autoincrement, " + 
+	KEY_EVENT_ID + " long " +
 	")";
 	
 	protected static final String CREATE_TABLE_PAYMENT = "create table if not exists " + DATABASE_TABLE_PAYMENT + 
 	" ("+ KEY_ROWID 	+ " integer primary key autoincrement, " +  
+	KEY_EVENT_ID + " long not null, " +
 	KEY_PAYMENT_CASH + " float not null, " + KEY_PAYMENT_DATE + " long not null, " +
 	KEY_PAYMENT_DESCRIPTION + " text, " + KEY_PAYMENT_PAYER + " long not null" +
 	")";
 	
-//	protected static final String CREATE_TABLE_PERSON = "create table if not exists " + DATABASE_TABLE_DAILY_REPORTS +
-//	" ("+ KEY_ROWID 	+ " integer primary key autoincrement, " + 
-//	KEY_GAME_ID + " long not null, " + KEY_DAILY_REPORT_DAY + "  long not null, " +
-//	KEY_DAILY_REPORT_DROPPED_TASKS + " integer not null, " + KEY_DAILY_REPORT_EARNED_CAHS + " float not null," +
-//	KEY_DAILY_REPORT_EXPIRED_TASKS + " integer not null, " + KEY_DAILY_REPORT_FINISHED_TASKS + " integer not null, " +
-//	KEY_DAILY_REPORT_TOTAL_CASH + " float not null " +
-//	")";
+	protected static final String CREATE_TABLE_DEBTOR = "create table if not exists " + DATABASE_TABLE_DEBTOR + 
+	" ("+ KEY_ROWID 	+ " integer primary key autoincrement, " +  
+	KEY_DEBTOR_DEBTOR_ID + " long not null, " + KEY_DEBTOR_EVENT_ID + " long not null, " +
+	KEY_DEBTOR_PAYMENT_ID + " long not null " +
+	")";
+	 
 }

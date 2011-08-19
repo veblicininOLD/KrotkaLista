@@ -19,6 +19,12 @@ public class Event extends Entity {
 		this.persons = new ArrayList<Person>();
 	}
 
+	public Event(long id) {
+		super(id);		
+		this.payments = new ArrayList<Payment>();
+		this.persons = new ArrayList<Person>();
+	}
+	
 	public float calculateDebit(Person person){
 		float value = 0;
 

@@ -31,14 +31,13 @@
           <LinearLayout android:id="@+id/linearLayout2" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
         <TextView android:id="@+id/who_text" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="32.3sp" android:text="@string/form_for_what"></TextView>
  		<EditText 
-        	android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/new_payment_how_much" 
-        	 android:numeric="decimal" android:hint="@string/form_what_for_hint">  
+        	android:layout_height="wrap_content" android:layout_width="match_parent" android:hint="@string/form_what_for_hint" android:id="@+id/new_payment_for_what">  
         </EditText>    
         </LinearLayout>
     <LinearLayout android:id="@+id/linearLayout2" android:layout_width="match_parent" android:orientation="vertical" android:layout_height="wrap_content">
         <TextView android:id="@+id/textView1" android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="32.3sp" android:text="@string/form_when"></TextView>
         <DatePicker android:id="@+id/new_payment_when" android:layout_width="wrap_content" android:layout_height="wrap_content"></DatePicker>
-        <Button android:id="@+id/button1" android:layout_height="wrap_content" android:text="@string/form_debtors" android:layout_width="match_parent"></Button>
+        <Button android:id="@+id/new_payment_debtors" android:layout_height="wrap_content" android:text="@string/form_debtors" android:layout_width="match_parent"></Button>
     </LinearLayout>
     
     <Button  android:id="@+id/form_confirm_new_payment" android:layout_height="wrap_content"    	

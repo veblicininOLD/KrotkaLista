@@ -13,7 +13,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -28,21 +30,11 @@ public class ParticipantsActivity extends  ListActivity  {
 
     private static final String LOG_TAG = "ParticipantsActivity"; 
 
-	protected DBAdapter db; 
+	//protected DBAdapter db; 
 	protected SimpleCursorAdapter adapter;
 	protected PaymentManager pm = PaymentManager.getInstance();
 	
-	protected final int CREATE_NEW_PARTICIPANT = 1;
-	
-//	protected final Handler mHandler = new Handler(){
-//		public void handleMessage(Message msg) { 
-//			switch(msg.what){
-//				case PaymentManager.NEW_PARTICIPANT: 
-//					refresh();
-//					break;	
-//			}
-//			}
-//	};
+	protected final int CREATE_NEW_PARTICIPANT = 1;  
 	
 	public void refresh(){
 		setListAdapter(new ArrayAdapter<String>(this,
@@ -51,8 +43,7 @@ public class ParticipantsActivity extends  ListActivity  {
 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        Event event = null;
-         db = new DBAdapter(this);
+        Event event = null; 
 //        Cursor c = db.getParticipants(event);
 //        startManagingCursor(c);   
 //          adapter = new SimpleCursorAdapter(this,
@@ -66,12 +57,13 @@ public class ParticipantsActivity extends  ListActivity  {
 //                return number ;
 //            }
 //        }); 
-        
+	//	setContentView(R.layout.participants);
+
  		String[] names = pm.getParticipantNames(); 
 		this.setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, names));
+				android.R.layout.simple_list_item_1, names));			
 		
-      //  this.setListAdapter(adapter);
+      //  this.setListAdapter(adapter);  
     }     
 	
 	@Override
@@ -85,13 +77,10 @@ public class ParticipantsActivity extends  ListActivity  {
 	
 	@Override
 	protected void onPrepareDialog(int id, Dialog dialog) {
-		AlertDialog d = (AlertDialog) dialog;	
-
+		AlertDialog d = (AlertDialog) dialog;	 
 		switch(id){
-			case CREATE_NEW_PARTICIPANT:
-				
-		}
-		
+			case CREATE_NEW_PARTICIPANT: 
+		} 
 		// TODO Auto-generated method stub
 		//super.onPrepareDialog(id, dialog);
 	}
@@ -112,9 +101,9 @@ public class ParticipantsActivity extends  ListActivity  {
             .setTitle(R.string.participant_add_new_title)
                 .setView(textEntryView)
                 .setPositiveButton(R.string.form_yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        /* User clicked OK so do some stuff */
-                    	PaymentManager.getInstance().addParticipant(name.getText().toString());
+                    public void onClick(DialogInterface dialog, int whichButton) {                        
+                    	pm.addParticipant(name.getText().toString());
+                		save();
                     	Log.d(LOG_TAG, String.format("Name of new participant: %s", name.getText().toString()));
                     	refresh();                	
                     }
@@ -129,6 +118,12 @@ public class ParticipantsActivity extends  ListActivity  {
 	        dialog = null;
 		}
 		return dialog;
+	}
+	
+	private void save(){
+		DBAdapter db = new DBAdapter(this);
+		db.saveParticipants(pm.getActiveEvent());
+ 		db.close();
 	}
     
 	@Override
@@ -145,8 +140,7 @@ public class ParticipantsActivity extends  ListActivity  {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		   if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-		        Log.d(LOG_TAG, "Back button pressed: " + keyCode + ", " + event);		        
-		        db.saveParticipants(pm.getActiveEvent());
+// 		        db.saveParticipants(pm.getActiveEvent());
 		   }
 		return super.onKeyDown(keyCode, event);      
 		       

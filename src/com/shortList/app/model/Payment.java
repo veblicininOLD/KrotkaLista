@@ -26,6 +26,16 @@ public class Payment extends Entity implements Comparable<Payment>{
 		this.description = description;
 	}
 	
+	public Payment(long id, float cash, long date, Person payer,
+			List<Person> debtors, String description) {
+		super(id);
+		this.cashAmount = cash;
+		this.date = new Date(date);
+		this.payer = payer;
+		this.debtors = debtors;
+		this.description = description;
+	}
+	
 	public Payment(float cash, Date date, Person payer,
 			List<Person> debtors, String description) {		
 		this.cashAmount = cash;

@@ -56,6 +56,7 @@ public class PaymentManager  {
 		if(events.size() == 0){
 			long id = db.createNewEvent();
 			setActiveEvent(id, context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE));
+			this.activeEvent = new Event(id);			
 		}else{
 			this.events = events;
 			SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -149,6 +150,8 @@ public class PaymentManager  {
 	}
 	
 	public boolean addParticipant(Person person){
+
+		
 		return activeEvent.getPersons().add(person);
 	}
 	
