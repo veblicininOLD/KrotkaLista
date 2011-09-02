@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shortList.app.control.PaymentManager;
+import com.shortList.app.db.DBAdapter;
 import com.shortList.app.model.Person;
 
 public class EventActivity extends Activity {
@@ -46,6 +47,9 @@ public class EventActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.event);
+		
+		pm = PaymentManager.getInstance(); 
+		pm.init(getApplicationContext());
 
 		accountEventButton = (Button) findViewById(R.id.account_event);
 		accountEventButton.setOnClickListener(new OnClickListener() {
@@ -80,8 +84,7 @@ public class EventActivity extends Activity {
 				startActivityForResult(i, 0);
 			}
 		});
-		pm = PaymentManager.getInstance(); 
-		pm.init(getApplicationContext());
+
 		
 		suggestedPerson = (TextView) findViewById(R.id.suggested_person);
 		if (pm.getSuggestedPerson() != null)
@@ -111,6 +114,16 @@ public class EventActivity extends Activity {
 		}
 	}
 
- 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		save();
+		return super.onKeyDown(keyCode, event);
+	}
+	
+//	private void save(){
+//		DBAdapter db = new DBAdapter(this);
+//		db.save(pm.getActiveEvent());
+// 		db.close();
+//	}
 	
 }

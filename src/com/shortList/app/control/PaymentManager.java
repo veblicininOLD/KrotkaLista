@@ -62,8 +62,7 @@ public class PaymentManager  {
 			SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 			long activeEventId = settings.getLong(PREFERENCE_ACTIVE_EVENT, -1);
 			this.activeEvent = findEventById(activeEventId);
-		}
-			
+		}			
 		db.close();
 	}
 	

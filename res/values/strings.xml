@@ -18,6 +18,11 @@
     <string name="form_ok">Ok</string>
     <string name="form_cancel">Anuluj</string>
     
+    <string name="dialog_choose_actoin">Wybierz akcję</string>
+    <string name="dialog_show_details">Pokaż szczegóły</string>
+    <string name="dialog_remove">Usuń</string>
+    
+    
     <string name="participants">Uczestnicy</string>
     <string name="debtors">Dłużnicy</string>
     
@@ -38,4 +43,5 @@
     <string name="warning_no_debtor">Nie można dodać nowej płatności! Najpierw dodaj dłużnika.</string>
     
 </resources>
+
 

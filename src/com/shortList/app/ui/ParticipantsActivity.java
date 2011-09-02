@@ -103,7 +103,7 @@ public class ParticipantsActivity extends  ListActivity  {
                 .setPositiveButton(R.string.form_yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {                        
                     	pm.addParticipant(name.getText().toString());
-                		save();
+                		save(name.getText().toString(), pm.getActiveEvent());
                     	Log.d(LOG_TAG, String.format("Name of new participant: %s", name.getText().toString()));
                     	refresh();                	
                     }
@@ -120,9 +120,9 @@ public class ParticipantsActivity extends  ListActivity  {
 		return dialog;
 	}
 	
-	private void save(){
+	private void save(String personName, Event event){
 		DBAdapter db = new DBAdapter(this);
-		db.saveParticipants(pm.getActiveEvent());
+		db.saveParticipant(personName, event);
  		db.close();
 	}
     

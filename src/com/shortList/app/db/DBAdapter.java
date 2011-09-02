@@ -30,7 +30,7 @@ public class DBAdapter extends SQLiteOpenHelper {
 		db.execSQL(CREATE_TABLE_PERSON);
 		db.execSQL(CREATE_TABLE_PAYMENT);
 		db.execSQL(CREATE_TABLE_DEBTOR);
-	}
+	}    
 	
 	
 	@Override
@@ -107,16 +107,21 @@ public class DBAdapter extends SQLiteOpenHelper {
 		return retCode;
 	}
 
-
-	private long saveParticipant(Person p, Event event) {		
+	public long saveParticipant(Person person, Event event) {
+		return saveParticipant(person.getName(), event);
+	}
+	
+	
+	public long saveParticipant(String p, Event event) {		
 		long retCode = 0L;
 		long tmp;
 		ContentValues initialValues = new ContentValues(); 
 		initialValues.put(KEY_EVENT_ID, event.getId());	 
-		initialValues.put(KEY_USER_NAME, p.getName()); 	
+		initialValues.put(KEY_USER_NAME, p); 	
 		tmp = db.insert(DATABASE_TABLE_PERSON, null, initialValues);
 		retCode = ( tmp < 0) ? -1 : retCode;	
-		Log.d(LOG_TAG, String.format( "Saving Participant (%s); DBCode: %d", p.getName(), tmp));
+		//Log.d(LOG_TAG, event.)
+		Log.d(LOG_TAG, String.format( "Saving Participant (%s); DBCode: %d", p, tmp));
 		return retCode;
 	}
 
@@ -187,6 +192,7 @@ public class DBAdapter extends SQLiteOpenHelper {
 				KEY_ROWID + "=" + personId, null, null, null, null, null);
 		personCursor.moveToNext();
 		int size = personCursor.getCount();
+		Log.d(LOG_TAG, size + "");
 		long id = personCursor.getLong(0);
 		String name = personCursor.getString(1);
 		personCursor.close();
@@ -273,4 +279,19 @@ public class DBAdapter extends SQLiteOpenHelper {
 		return retCode;
 
 	}
+
+
+	public long save(Event activeEvent) {
+		long retCode = -1; 
+		
+		ContentValues initialValues = new ContentValues();
+	//	initialValues.put(KEY_EVENT_ID, eventId); 	
+		retCode = db.insert(DATABASE_TABLE_EVENT, null, initialValues);	
+		Log.d(LOG_TAG, String.format(
+				"Saving event DBCode: %d",  retCode));
+		return retCode;
+	}
+
+
+
 }
