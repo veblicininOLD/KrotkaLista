@@ -109,7 +109,8 @@ public class DBAdapter extends SQLiteOpenHelper {
 	private Person getPersonFromCursor(Cursor personCursor) {
 		long id = personCursor.getLong(0);
 		String name = personCursor.getString(1);
-		Person p = new Person(id, name);
+		long eventId = personCursor.getLong(2);
+		Person p = new Person(id, name, eventId);
 		return p;
 	}
 
@@ -187,7 +188,7 @@ public class DBAdapter extends SQLiteOpenHelper {
 			payment = getPaymentFromCursor(paymentCursor, eventId, persons);
 			list.add(payment);
 		}
-		Log.d(LOG_TAG, String.format(" ====== loading payments, size: %d", list.size()));
+		Log.d(LOG_TAG, String.format(" ====== loading payments, size[%d]", list.size()));
 		paymentCursor.close();				
 		return list;
 	}
@@ -198,7 +199,8 @@ public class DBAdapter extends SQLiteOpenHelper {
 		float cash = paymentCursor.getFloat(1);
 		long date = paymentCursor.getLong(2);
 		String description = paymentCursor.getString(3);
-		Person payer = new Person(paymentCursor.getLong(4), findNameById(paymentCursor.getLong(4), persons));  //getPerson(paymentCursor.getLong(4));
+		
+		Person payer = findPersonById(paymentCursor.getLong(4), persons); // new Person(paymentCursor.getLong(4), findNameById(paymentCursor.getLong(4), persons));  //getPerson(paymentCursor.getLong(4));
 		
 		List<Person> debtors = getDebtors(eventId, paymentId, persons);
 			
@@ -216,26 +218,22 @@ public class DBAdapter extends SQLiteOpenHelper {
 //		Log.d(LOG_TAG, size + "");
 		long id = personCursor.getLong(0);
 		String name = personCursor.getString(1);
+		long eventId = personCursor.getLong(2);
 		personCursor.close();
-		return new Person(id, name);		
+		return new Person(id, name, eventId);		
 	}
 
 
 	private List<Person> getDebtors(long eventId, long paymentId, List<Person> persons) {
+		//TODO
 		Cursor debtorCursor = db.query(true, DATABASE_TABLE_DEBTOR, new String[] {
 				KEY_ROWID,  KEY_DEBTOR_DEBTOR_ID, KEY_DEBTOR_EVENT_ID, KEY_DEBTOR_PAYMENT_ID  }, 
-				KEY_DEBTOR_PAYMENT_ID + "=" + paymentId + " AND " +
-				KEY_DEBTOR_EVENT_ID + " = " + eventId , null, null, null, null, null);
+				KEY_DEBTOR_PAYMENT_ID + "=" + paymentId /*+ " AND " +
+				KEY_DEBTOR_EVENT_ID + " = " + eventId*/ , null, null, null, null, null);
 		// use cursor join  
-		List<Person> list = new ArrayList<Person>();
-		
-		if (debtorCursor.getCount() == 0){
-			debtorCursor.close();
-			return list;
-		}
-		
+		List<Person> list = new ArrayList<Person>(); 		
 		Person debtor;
-		
+	 
 		while (debtorCursor.moveToNext()) {
 			debtor = getDebtorFromCursor(debtorCursor, eventId, persons);
 			list.add(debtor);
@@ -249,19 +247,27 @@ public class DBAdapter extends SQLiteOpenHelper {
 
 	private Person getDebtorFromCursor(Cursor debtorCursor, long eventId, List<Person> persons) {
 		long debtorId = debtorCursor.getLong(1); 
-		String name = findNameById(eventId, persons);
-		Person person = new Person(debtorId, name);
+		String name = findNameById(eventId, persons);		
+		Person person = new Person(debtorId, name, eventId);
 		return person;
 	}
 
-	private String findNameById(long eventId, List<Person> persons){
+	private String findNameById(long id, List<Person> persons){
 		for(Person p : persons){
-			if (p.getId() == eventId)
+			if (p.getId() == id)
 				return p.getName();
 		}
 		return "";
 	}
 
+	private Person findPersonById(long id, List<Person> persons){
+		for(Person p : persons){
+			if (p.getId() == id)
+				return p;
+		}
+		return null;
+	}
+	
 	@Override
 	public synchronized void close() {		
 		super.close();
@@ -298,27 +304,27 @@ public class DBAdapter extends SQLiteOpenHelper {
 		initialValues.put(KEY_PAYMENT_DESCRIPTION, payment.getDescription());		
 		initialValues.put(KEY_PAYMENT_PAYER, payment.getPayer().getId());
 		 
-		saveDebtors(event.getId(), payment);
 		
 		retCode = db.insert(DATABASE_TABLE_PAYMENT, null, initialValues);	
+		saveDebtors(event.getId(), payment.getDebtors(), retCode);
 		Log.d(LOG_TAG, String.format(
-				"Saving Payment %f (%s); DBCode: %d, PayerId: %d", payment.getCashAmount(), payment.getDescription(), retCode, payment.getPayer().getId()));
+				"Saving Payment %f (%s); DBCode: %d, PayerId: %d, EventID %d", payment.getCashAmount(), payment.getDescription(), retCode, payment.getPayer().getId(), event.getId()));
 		return retCode;
 		
 	}
 
 
-	private long saveDebtors(long eventId, Payment payment) {
+	private long saveDebtors(long eventId, List<Person> debtors, long paymentId) {
 		long retCode = -1;
-		for (Person debtor : payment.getDebtors()){
+		for (Person debtor : debtors){
 			ContentValues initialValues = new ContentValues(); 
 			initialValues.put(KEY_DEBTOR_EVENT_ID, eventId);
-			initialValues.put(KEY_DEBTOR_PAYMENT_ID, payment.getId());
+			initialValues.put(KEY_DEBTOR_PAYMENT_ID, paymentId);
 			initialValues.put(KEY_DEBTOR_DEBTOR_ID, debtor.getId());
 			retCode = db.insert(DATABASE_TABLE_DEBTOR, null, initialValues);	
-		} 
 		Log.d(LOG_TAG, String.format(
-				"Saving debtors %d; DBCode: %d", payment.getDebtors().size(),  retCode));
+				"Saving debtors %d; DBCode: %d eventId: %d, paymentId: %d, debtor: %s", debtors.size(),  retCode, eventId, paymentId, debtor.getName()));
+		} 
 		return retCode;
 	}
 
@@ -336,12 +342,15 @@ public class DBAdapter extends SQLiteOpenHelper {
 
 
 	public void deletePayment(Payment paymentToDelete, Event activeEvent) {
-		db.delete(DATABASE_TABLE_PAYMENT, KEY_EVENT_ID + "=? AND " + KEY_ROWID + "=?", new String[] { activeEvent.getId() + " " , paymentToDelete.getId() + ""});
-		db.delete(DATABASE_TABLE_DEBTOR, KEY_EVENT_ID + "=? AND " + KEY_DEBTOR_PAYMENT_ID + " =?", new String[] { activeEvent.getId() + " " , paymentToDelete.getId() + ""});
+		//TODO:wtf??!!!!
+		int deletedRows = db.delete(DATABASE_TABLE_PAYMENT, /*"( "+ KEY_EVENT_ID + "=? ) AND ( " +*/ KEY_ROWID + "=? ", new String[] { /*activeEvent.getId() + " " , */paymentToDelete.getId() + ""});
+		db.delete(DATABASE_TABLE_DEBTOR,  KEY_EVENT_ID + "=? AND " + KEY_DEBTOR_PAYMENT_ID + " =?", new String[] { activeEvent.getId() + " " , paymentToDelete.getId() + ""});
+		Log.d(LOG_TAG, String.format("Deleted rows: %d, eventId: %d, paymentId: %d", deletedRows, activeEvent.getId(), paymentToDelete.getId() ));
 	}
 
 	public void deletePerson(String personToDelete, Event activeEvent) {
-		db.delete(DATABASE_TABLE_PERSON, KEY_EVENT_ID + "=? AND " + KEY_USER_NAME + "=?", new String[] { activeEvent.getId() + " " , personToDelete + ""});	
+		int ret = db.delete(DATABASE_TABLE_PERSON, /*"(" + KEY_EVENT_ID + " =?) AND (" +*/ KEY_USER_NAME + " LIKE ? ", new String[] { /*activeEvent.getId() + " ",*/ personToDelete + "" });
+		Log.d(LOG_TAG, "deleted persons: " + ret + " personToDelete " + personToDelete);
 	}
 
 	public void deletePerson(long personToDelete, Event activeEvent) {

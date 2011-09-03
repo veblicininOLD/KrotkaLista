@@ -114,7 +114,7 @@ public class ParticipantsActivity extends  ListActivity  {
                 .setView(textEntryView)
                 .setPositiveButton(R.string.form_yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {                        
-                    	pm.addParticipant(new Person(save(name.getText().toString(), pm.getActiveEvent()), name.getText().toString()));                                    		
+                    	pm.addParticipant(new Person(save(name.getText().toString(), pm.getActiveEvent()), name.getText().toString(), pm.getActiveEvent().getId()));                                    		
                     	Log.d(LOG_TAG, String.format("Name of new participant: %s", name.getText().toString()));
                     	refresh();                	
                     }
@@ -154,6 +154,7 @@ public class ParticipantsActivity extends  ListActivity  {
 	protected void delete() {
 		//TODO check, ask
 		String nameOfParticipantToDelete = pm.getParticipantNames()[(int)choosenParticipant];
+		Log.d(LOG_TAG, "Do usuniecia: " + nameOfParticipantToDelete);
  		pm.deletePerson(nameOfParticipantToDelete);
 		DBAdapter db = new DBAdapter(this);
 		db.deletePerson(nameOfParticipantToDelete, pm.getActiveEvent());

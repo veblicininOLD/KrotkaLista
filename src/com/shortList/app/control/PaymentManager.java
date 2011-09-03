@@ -148,9 +148,7 @@ public class PaymentManager  {
 		return addParticipant(new Person(name));
 	}
 	
-	public boolean addParticipant(Person person){
-
-		
+	public boolean addParticipant(Person person){		
 		return activeEvent.getPersons().add(person);
 	}
 	
@@ -215,7 +213,7 @@ public class PaymentManager  {
 	
 	public Person getSuggestedPersonFromEvent(Event event) {
 		Person person = null;
-		float max = 0.0f;
+		float max = Float.MIN_VALUE;
 		float temp;
 		for (Person p : event.getPersons()){
 			temp = getDebitForEvent(event, p);
@@ -228,6 +226,7 @@ public class PaymentManager  {
 	}
 
 	public void deletePayment(Payment payment, Event event){
+		
 		event.getPayments().remove(payment);
 	}
 	
@@ -255,6 +254,7 @@ public class PaymentManager  {
 	public void deletePerson(String choosenParticipant, Event event) {
 		for(Person p : event.getPersons()){
 			if (p.getName().equals(choosenParticipant)){
+				Log.d(LOG_TAG, "Removed: " + p.getName() + " should be removed: " + choosenParticipant);
 				deletePerson(p.getId());
 				return;
 			}				
