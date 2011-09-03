@@ -226,4 +226,39 @@ public class PaymentManager  {
 		}
 		return person;
 	}
+
+	public void deletePayment(Payment payment, Event event){
+		event.getPayments().remove(payment);
+	}
+	
+	public void deletePayment(Payment payment) {
+		deletePayment(payment, activeEvent);
+	}
+
+	public void deletePerson(long choosenParticipant, Event event) {
+		for(Person p : event.getPersons()){
+			if (p.getId() == choosenParticipant){
+				event.getPersons().remove(p);
+				return;
+			}				
+		} 
+	}
+	
+	public void deletePerson(long choosenParticipant) {
+		deletePerson(choosenParticipant, activeEvent);
+	}
+	
+	public void deletePerson(String choosenParticipant) {
+		deletePerson(choosenParticipant, activeEvent);
+ 	}
+	
+	public void deletePerson(String choosenParticipant, Event event) {
+		for(Person p : event.getPersons()){
+			if (p.getName().equals(choosenParticipant)){
+				deletePerson(p.getId());
+				return;
+			}				
+		} 
+ 	}
+	
 }

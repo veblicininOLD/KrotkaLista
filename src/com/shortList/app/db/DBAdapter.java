@@ -1,6 +1,26 @@
 package com.shortList.app.db;
   
-import static com.shortList.app.db.Constants.*;
+import static com.shortList.app.db.Constants.CREATE_TABLE_DEBTOR;
+import static com.shortList.app.db.Constants.CREATE_TABLE_EVENT;
+import static com.shortList.app.db.Constants.CREATE_TABLE_PAYMENT;
+import static com.shortList.app.db.Constants.CREATE_TABLE_PERSON;
+import static com.shortList.app.db.Constants.DATABASE_NAME;
+import static com.shortList.app.db.Constants.DATABASE_TABLE_DEBTOR;
+import static com.shortList.app.db.Constants.DATABASE_TABLE_EVENT;
+import static com.shortList.app.db.Constants.DATABASE_TABLE_EVENT_PAYMENTS;
+import static com.shortList.app.db.Constants.DATABASE_TABLE_PAYMENT;
+import static com.shortList.app.db.Constants.DATABASE_TABLE_PERSON;
+import static com.shortList.app.db.Constants.DATABASE_VERSION;
+import static com.shortList.app.db.Constants.KEY_DEBTOR_DEBTOR_ID;
+import static com.shortList.app.db.Constants.KEY_DEBTOR_EVENT_ID;
+import static com.shortList.app.db.Constants.KEY_DEBTOR_PAYMENT_ID;
+import static com.shortList.app.db.Constants.KEY_EVENT_ID;
+import static com.shortList.app.db.Constants.KEY_PAYMENT_CASH;
+import static com.shortList.app.db.Constants.KEY_PAYMENT_DATE;
+import static com.shortList.app.db.Constants.KEY_PAYMENT_DESCRIPTION;
+import static com.shortList.app.db.Constants.KEY_PAYMENT_PAYER;
+import static com.shortList.app.db.Constants.KEY_ROWID;
+import static com.shortList.app.db.Constants.KEY_USER_NAME;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,13 +170,13 @@ public class DBAdapter extends SQLiteOpenHelper {
 		Event e = null;
 		long id = eventCursor.getLong(0);  
 		List<Person> persons = loadParticipants(id);
-		List<Payment> payments = loadPayments(id);
+		List<Payment> payments = loadPayments(id, persons);
 		e  = new Event(id, payments, persons);
 		//Log.d(LOG_TAG, String.format("Event loaded: %s", name));
  		return e;
 	}
 	
-	private List<Payment> loadPayments(long eventId) {
+	private List<Payment> loadPayments(long eventId, List<Person> persons) {
 		ArrayList<Payment> list = new ArrayList<Payment>(); 
 		Cursor paymentCursor = db.query(true, DATABASE_TABLE_PAYMENT, new String[] {
 				KEY_ROWID, KEY_PAYMENT_CASH, KEY_PAYMENT_DATE, KEY_PAYMENT_DESCRIPTION,
@@ -164,22 +184,23 @@ public class DBAdapter extends SQLiteOpenHelper {
 				KEY_EVENT_ID + "=" + eventId, null, null, null, null, null);
 		Payment payment;
 		while (paymentCursor.moveToNext()) {
-			payment = getPaymentFromCursor(paymentCursor, eventId);
+			payment = getPaymentFromCursor(paymentCursor, eventId, persons);
 			list.add(payment);
 		}
+		Log.d(LOG_TAG, String.format(" ====== loading payments, size: %d", list.size()));
 		paymentCursor.close();				
 		return list;
 	}
 
 
-	private Payment getPaymentFromCursor(Cursor paymentCursor, long eventId) {
+	private Payment getPaymentFromCursor(Cursor paymentCursor, long eventId, List<Person> persons) {
 		long paymentId = paymentCursor.getLong(0);
 		float cash = paymentCursor.getFloat(1);
 		long date = paymentCursor.getLong(2);
 		String description = paymentCursor.getString(3);
-		Person payer = getPerson(paymentCursor.getLong(4));
+		Person payer = new Person(paymentCursor.getLong(4), findNameById(paymentCursor.getLong(4), persons));  //getPerson(paymentCursor.getLong(4));
 		
-		List<Person> debtors = getDebtors(eventId, paymentId);
+		List<Person> debtors = getDebtors(eventId, paymentId, persons);
 			
 		Payment p = new Payment(paymentId, cash, date, payer, debtors, description );
 		return p;		
@@ -191,8 +212,8 @@ public class DBAdapter extends SQLiteOpenHelper {
 				KEY_ROWID,  KEY_USER_NAME, KEY_EVENT_ID  }, 
 				KEY_ROWID + "=" + personId, null, null, null, null, null);
 		personCursor.moveToNext();
-		int size = personCursor.getCount();
-		Log.d(LOG_TAG, size + "");
+//		int size = personCursor.getCount();
+//		Log.d(LOG_TAG, size + "");
 		long id = personCursor.getLong(0);
 		String name = personCursor.getString(1);
 		personCursor.close();
@@ -200,22 +221,46 @@ public class DBAdapter extends SQLiteOpenHelper {
 	}
 
 
-	private List<Person> getDebtors(long eventId, long paymentId) {
+	private List<Person> getDebtors(long eventId, long paymentId, List<Person> persons) {
 		Cursor debtorCursor = db.query(true, DATABASE_TABLE_DEBTOR, new String[] {
 				KEY_ROWID,  KEY_DEBTOR_DEBTOR_ID, KEY_DEBTOR_EVENT_ID, KEY_DEBTOR_PAYMENT_ID  }, 
 				KEY_DEBTOR_PAYMENT_ID + "=" + paymentId + " AND " +
 				KEY_DEBTOR_EVENT_ID + " = " + eventId , null, null, null, null, null);
 		// use cursor join  
-		debtorCursor.moveToNext();
+		List<Person> list = new ArrayList<Person>();
+		
 		if (debtorCursor.getCount() == 0){
 			debtorCursor.close();
-			return new ArrayList<Person>();
+			return list;
 		}
-		long debtorId = debtorCursor.getLong(1);
+		
+		Person debtor;
+		
+		while (debtorCursor.moveToNext()) {
+			debtor = getDebtorFromCursor(debtorCursor, eventId, persons);
+			list.add(debtor);
+		}
+		
 		debtorCursor.close();
-		return null;
+		Log.d(LOG_TAG, String.format("Amount of loaded debtors for a payment: %d", list.size()));
+		return list;
 	}
 
+
+	private Person getDebtorFromCursor(Cursor debtorCursor, long eventId, List<Person> persons) {
+		long debtorId = debtorCursor.getLong(1); 
+		String name = findNameById(eventId, persons);
+		Person person = new Person(debtorId, name);
+		return person;
+	}
+
+	private String findNameById(long eventId, List<Person> persons){
+		for(Person p : persons){
+			if (p.getId() == eventId)
+				return p.getName();
+		}
+		return "";
+	}
 
 	@Override
 	public synchronized void close() {		
@@ -252,14 +297,12 @@ public class DBAdapter extends SQLiteOpenHelper {
 		initialValues.put(KEY_PAYMENT_DATE, payment.getDate().getTime());
 		initialValues.put(KEY_PAYMENT_DESCRIPTION, payment.getDescription());		
 		initialValues.put(KEY_PAYMENT_PAYER, payment.getPayer().getId());
-		
-		//TODO
-		// save debtors
+		 
 		saveDebtors(event.getId(), payment);
 		
 		retCode = db.insert(DATABASE_TABLE_PAYMENT, null, initialValues);	
 		Log.d(LOG_TAG, String.format(
-				"Saving Payment %f (%s); DBCode: %d", payment.getCashAmount(), payment.getDescription(), retCode));
+				"Saving Payment %f (%s); DBCode: %d, PayerId: %d", payment.getCashAmount(), payment.getDescription(), retCode, payment.getPayer().getId()));
 		return retCode;
 		
 	}
@@ -277,7 +320,6 @@ public class DBAdapter extends SQLiteOpenHelper {
 		Log.d(LOG_TAG, String.format(
 				"Saving debtors %d; DBCode: %d", payment.getDebtors().size(),  retCode));
 		return retCode;
-
 	}
 
 
@@ -293,5 +335,21 @@ public class DBAdapter extends SQLiteOpenHelper {
 	}
 
 
+	public void deletePayment(Payment paymentToDelete, Event activeEvent) {
+		db.delete(DATABASE_TABLE_PAYMENT, KEY_EVENT_ID + "=? AND " + KEY_ROWID + "=?", new String[] { activeEvent.getId() + " " , paymentToDelete.getId() + ""});
+		db.delete(DATABASE_TABLE_DEBTOR, KEY_EVENT_ID + "=? AND " + KEY_DEBTOR_PAYMENT_ID + " =?", new String[] { activeEvent.getId() + " " , paymentToDelete.getId() + ""});
+	}
+
+	public void deletePerson(String personToDelete, Event activeEvent) {
+		db.delete(DATABASE_TABLE_PERSON, KEY_EVENT_ID + "=? AND " + KEY_USER_NAME + "=?", new String[] { activeEvent.getId() + " " , personToDelete + ""});	
+	}
+
+	public void deletePerson(long personToDelete, Event activeEvent) {
+		db.delete(DATABASE_TABLE_PERSON, KEY_EVENT_ID + "=? AND " + KEY_ROWID + "=?", new String[] { activeEvent.getId() + " " , personToDelete + ""});	
+	}
+
+	public void deletePerson(Person personToDelete, Event activeEvent) {
+		db.delete(DATABASE_TABLE_PERSON, KEY_EVENT_ID + "=? AND " + KEY_ROWID + "=?", new String[] { activeEvent.getId() + " " , personToDelete.getId() + ""});	
+	}
 
 }

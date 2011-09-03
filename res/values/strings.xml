@@ -18,9 +18,11 @@
     <string name="form_ok">Ok</string>
     <string name="form_cancel">Anuluj</string>
     
-    <string name="dialog_choose_actoin">Wybierz akcję</string>
+    <string name="dialog_ask_for_participant_deletion">Czy jesteś pewny, że chcesz usunąć użytkownika?</string>   
+    <string name="dialog_choose_action">Wybierz akcję</string>
     <string name="dialog_show_details">Pokaż szczegóły</string>
     <string name="dialog_remove">Usuń</string>
+    <string name="dialog_confirmation">Potwierdzenie</string>
     
     
     <string name="participants">Uczestnicy</string>

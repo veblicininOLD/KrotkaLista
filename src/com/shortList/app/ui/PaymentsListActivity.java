@@ -7,31 +7,38 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.shortList.app.control.PaymentManager;
+import com.shortList.app.db.DBAdapter;
 import com.shortList.app.model.Payment;
+import com.shortList.app.model.Person;
 
 public class PaymentsListActivity extends ListActivity {
 
-    private static final String LOG_TAG = "PaymentsListActivity";
+   // private static final String LOG_TAG = "PaymentsListActivity";
 	private static final int ACTIONS = 0;
 	private static final int CONFIRMATION = 1; 
     protected PaymentManager pm;
+	private long choosenPayment;
+	protected List<Payment> payments;
 
     public void onCreate(Bundle icicle) {
     	pm = PaymentManager.getInstance();
         super.onCreate(icicle); 
-        List<Payment> payments =  pm.getActiveEvent().getPayments();         
-		this.setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, getNames(payments))); 
+        loadData();
     }    
+    
+    private void loadData() {
+        payments =  pm.getActiveEvent().getPayments();         
+		this.setListAdapter(new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, getNames(payments)));
+	}
     
     protected String[] getNames(List<Payment> payments){
     	String[] names = new String[payments.size()];
@@ -39,12 +46,37 @@ public class PaymentsListActivity extends ListActivity {
     	
     	int i = 0;
     	for(Payment p : payments){
-    		names[i++] = p.getPayer().getName() + " " + p.getCashAmount() ;
+    		names[i++] = p.getPayer().getName() + " " + p.getCashAmount() + "zł" ;
     	}
-    	
     	return names;
     }
     
+	private void showInfo() {
+		Payment p  = payments.get((int) choosenPayment);
+		StringBuilder sb = new StringBuilder(); //TODO
+		sb.append(p.getPayer().getName());
+		sb.append("\n==============\n");
+		sb.append(p.getCashAmount() + "zł\n");
+		sb.append(p.getDescription() + "\n");
+		sb.append(p.getDate() + "\n");
+		sb.append("\n==============\n");
+		for(Person per : p.getDebtors())
+			sb.append(per.getName());
+		
+		Toast toast =  Toast.makeText(this, sb.toString(), Toast.LENGTH_LONG); 
+		toast.show();
+	}
+    
+	private void deleteItem() {
+		//TODO check, ask
+		Payment paymentToDelete = payments.get((int) choosenPayment);
+		pm.deletePayment(paymentToDelete);
+		DBAdapter db = new DBAdapter(this);
+		db.deletePayment(paymentToDelete, pm.getActiveEvent());
+		db.close();
+		loadData();
+	}
+	
 	@Override
 	protected Dialog onCreateDialog( int id ) 
 	{		
@@ -57,10 +89,28 @@ public class PaymentsListActivity extends ListActivity {
 		
 		switch(id){
 		case ACTIONS:				
-			builder.setTitle(R.string.dialog_choose_actoin);
+			builder.setTitle(R.string.dialog_choose_action);
+			builder.setItems(possibleActions, new DialogInterface.OnClickListener() {
+			    public void onClick(DialogInterface dialog, int item) {				
+					if (item == 0){
+						showInfo();						
+					}else if (item == 1){
+						deleteItem();
+					}											
+//					dialog.dismiss();
+//					startActivity(iStats);
+			    }
+
+
+			    
+			});
+			dialog = builder.create();
+			break;	
+		case CONFIRMATION:
+			builder.setTitle(R.string.dialog_confirmation);
 			builder.setItems(possibleActions, new DialogInterface.OnClickListener() {
 			    public void onClick(DialogInterface dialog, int item) {
-					Intent iStats = null;
+					//Intent iStats = null;
 //					if (item == 0)
 //						 
 //					dialog.dismiss();
@@ -68,9 +118,7 @@ public class PaymentsListActivity extends ListActivity {
 			    }
 			});
 			dialog = builder.create();
-			break;	
-		case CONFIRMATION:
-			break;			
+			break;	 		
 		default:
 			dialog = null;
 		}
@@ -80,18 +128,29 @@ public class PaymentsListActivity extends ListActivity {
     
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-    	showDialog(ACTIONS, id);    	
+    	choosenPayment = id;
+    	showDialog(ACTIONS);    	
      	super.onListItemClick(l, v, position, id);
     }
     
-	private void showDialog(int actionId, long id) {
-		// TODO Auto-generated method stub
-		
+	 @Override
+	protected void onPrepareDialog(int id, Dialog dialog) {
+		AlertDialog d = (AlertDialog) dialog;	
+		switch (id) {
+		case ACTIONS:
+			d.setTitle(R.string.dialog_choose_action);
+			break;
+		case CONFIRMATION:
+			d.setTitle(R.string.dialog_confirmation);
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
+		//MenuInflater inflater = getMenuInflater();
 	//	inflater.inflate(R.menu.participant_menu, menu);
 		return true;
 	}

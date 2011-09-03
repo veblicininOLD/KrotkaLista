@@ -84,14 +84,21 @@ public class EventActivity extends Activity {
 				startActivityForResult(i, 0);
 			}
 		});
-
-		
 		suggestedPerson = (TextView) findViewById(R.id.suggested_person);
+		updateSuggestedPayer();		
+	}
+	
+	@Override
+	protected void onStart() {
+		updateSuggestedPayer();
+		super.onStart();
+	}
+	
+	private void updateSuggestedPayer(){
 		if (pm.getSuggestedPerson() != null)
 			suggestedPerson.setText(pm.getSuggestedPerson().getName());
 		else
-			suggestedPerson.setText(R.string.anyone);
-		Log.d(LOG_TAG, "start");
+			suggestedPerson.setText(R.string.anyone); 
 	}
 
 	@Override

@@ -1,6 +1,8 @@
 package com.shortList.app.ui;
  
 
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -23,18 +25,25 @@ import android.widget.SimpleCursorAdapter;
 import com.shortList.app.control.PaymentManager;
 import com.shortList.app.db.DBAdapter;
 import com.shortList.app.model.Event;
+import com.shortList.app.model.Payment;
+import com.shortList.app.model.Person;
  
  
 
 public class ParticipantsActivity extends  ListActivity  {
 
-    private static final String LOG_TAG = "ParticipantsActivity"; 
+    private static final String LOG_TAG = "ParticipantsActivity";
+
 
 	//protected DBAdapter db; 
 	protected SimpleCursorAdapter adapter;
+	protected long choosenParticipant;
 	protected PaymentManager pm = PaymentManager.getInstance();
+	protected List<Person> payments;
+
 	
-	protected final int CREATE_NEW_PARTICIPANT = 1;  
+	protected static final int CREATE_NEW_PARTICIPANT = 10;  
+	protected static final int DELETE_PARTICIPANT = 20; 
 	
 	public void refresh(){
 		setListAdapter(new ArrayAdapter<String>(this,
@@ -43,7 +52,8 @@ public class ParticipantsActivity extends  ListActivity  {
 
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        Event event = null; 
+        loadData();
+      //  Event event = null; 
 //        Cursor c = db.getParticipants(event);
 //        startManagingCursor(c);   
 //          adapter = new SimpleCursorAdapter(this,
@@ -57,14 +67,15 @@ public class ParticipantsActivity extends  ListActivity  {
 //                return number ;
 //            }
 //        }); 
-	//	setContentView(R.layout.participants);
-
- 		String[] names = pm.getParticipantNames(); 
-		this.setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, names));			
-		
+	//	setContentView(R.layout.participants); 
       //  this.setListAdapter(adapter);  
     }     
+    
+    protected void loadData(){
+ 		String[] names = pm.getParticipantNames(); 
+		this.setListAdapter(new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, names));
+    }
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,17 +84,18 @@ public class ParticipantsActivity extends  ListActivity  {
 		return true;
 	}
 	
+ 
 	
-	
-	@Override
-	protected void onPrepareDialog(int id, Dialog dialog) {
-		AlertDialog d = (AlertDialog) dialog;	 
-		switch(id){
-			case CREATE_NEW_PARTICIPANT: 
-		} 
-		// TODO Auto-generated method stub
-		//super.onPrepareDialog(id, dialog);
-	}
+//	@Override
+//	protected void onPrepareDialog(int id, Dialog dialog) {
+//		AlertDialog d = (AlertDialog) dialog;	 
+//		switch(id){
+//			case CREATE_NEW_PARTICIPANT:
+//			case DELETE_PARTICIPANT:
+//		} 
+//		// TODO Auto-generated method stub
+//		super.onPrepareDialog(id, dialog);
+//	}
 	
 	
 	
@@ -102,8 +114,7 @@ public class ParticipantsActivity extends  ListActivity  {
                 .setView(textEntryView)
                 .setPositiveButton(R.string.form_yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {                        
-                    	pm.addParticipant(name.getText().toString());
-                		save(name.getText().toString(), pm.getActiveEvent());
+                    	pm.addParticipant(new Person(save(name.getText().toString(), pm.getActiveEvent()), name.getText().toString()));                                    		
                     	Log.d(LOG_TAG, String.format("Name of new participant: %s", name.getText().toString()));
                     	refresh();                	
                     }
@@ -113,17 +124,59 @@ public class ParticipantsActivity extends  ListActivity  {
                         /* User clicked cancel so do some stuff */
                     }
                 })
-                .create(); 
+                .create();
+		case DELETE_PARTICIPANT:
+        //    final EditText name_delete = (EditText) textEntryView.findViewById(R.id.name_of_new_participant);
+			 // new AlertDialog.Builder(this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			 builder.setMessage(R.string.dialog_ask_for_participant_deletion)
+		       .setCancelable(false)
+		       .setPositiveButton(R.string.form_ok, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		        	   if (check()){
+		        		   delete();
+		        		   loadData();
+		        	   }
+		           }
+		       })
+		       .setNegativeButton(R.string.form_cancel, new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+			 return builder.create();
 		default:
 	        dialog = null;
 		}
 		return dialog;
 	}
 	
-	private void save(String personName, Event event){
+	protected void delete() {
+		//TODO check, ask
+		String nameOfParticipantToDelete = pm.getParticipantNames()[(int)choosenParticipant];
+ 		pm.deletePerson(nameOfParticipantToDelete);
 		DBAdapter db = new DBAdapter(this);
-		db.saveParticipant(personName, event);
+		db.deletePerson(nameOfParticipantToDelete, pm.getActiveEvent());
+		db.close();
+		loadData();
+	}
+
+	protected boolean check() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	/**
+	 * Saving a participant to an event
+	 * @param personName
+	 * @param event
+	 * @return
+	 */
+	private long save(String personName, Event event){
+		DBAdapter db = new DBAdapter(this);
+		long dbCode = db.saveParticipant(personName, event);
  		db.close();
+ 		return dbCode;
 	}
     
 	@Override
@@ -146,20 +199,14 @@ public class ParticipantsActivity extends  ListActivity  {
 		       
 	}
 	
+	
+	/**
+	 * action after clicking a participant
+	 */
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		//TODO przed usunieciem sprawdzic czy sa dla tej osoby wpisy
-		
-		
-//		Log.d(LOG_TAG, "clicked:" +  ((SQLiteCursor)adapter.getItem(position)).getString(DBAdapter.KEY_URL_POSITION) + " id:" + id + " position: " + position);
-//		super.onListItemClick(l, v, position, id);		
-//		Bundle bun = new Bundle(); 				
-//		bun.putInt(DBAdapter.KEY_ROWID, position);
-//		bun.putString(DBAdapter.KEY_URL, ((SQLiteCursor)adapter.getItem(position)).getString(DBAdapter.KEY_URL_POSITION) );						
-//		Intent intent = new Intent();
-//		intent.putExtras(bun);
-//        setResult(RESULT_OK, intent);
-//        finish();
+		choosenParticipant = id;
+		showDialog(DELETE_PARTICIPANT); 
 	}
  
 }
