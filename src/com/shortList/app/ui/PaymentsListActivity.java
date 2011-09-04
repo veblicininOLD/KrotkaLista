@@ -61,7 +61,7 @@ public class PaymentsListActivity extends ListActivity {
 		sb.append(p.getDate() + "\n");
 		sb.append("\n==============\n");
 		for(Person per : p.getDebtors())
-			sb.append(per.getName());
+			sb.append(per.getName()+ " ");
 		
 		Toast toast =  Toast.makeText(this, sb.toString(), Toast.LENGTH_LONG); 
 		toast.show();

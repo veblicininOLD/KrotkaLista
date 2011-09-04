@@ -181,6 +181,7 @@ public class PaymentManager  {
 		List<Person> persons = new ArrayList<Person>();
 		for (String debtor : debtors){
 			persons.add(findPersonByName(debtor));
+			Log.d(LOG_TAG, findPersonByName(debtor).getName());
 		}
 		return persons;
 	}
@@ -191,6 +192,14 @@ public class PaymentManager  {
 				return p;
 		}
 		return null;
+	}
+	
+	protected boolean isDebtor(Payment payment, String name){
+		return payment.isDebtor(findPersonByName(name));
+	}
+	
+	protected boolean isPayer(Payment payment, String name){
+		return payment.getPayer().equals(findPersonByName(name));		
 	}
 
 	private float getDebit(Person person){
@@ -260,5 +269,16 @@ public class PaymentManager  {
 			}				
 		} 
  	}
+	
+	
+
+	public int hasPersonPayments(String nameOfParticipant) {
+		int counter = 0;
+		for(Payment p : activeEvent.getPayments())
+			if (isDebtor(p, nameOfParticipant) || isPayer(p, nameOfParticipant))
+				counter++;	
+		Log.d(LOG_TAG, String.format("User %s was detected in %d payments", nameOfParticipant, counter));
+		return counter;
+	}
 	
 }

@@ -114,6 +114,9 @@ public class PaymentActivity extends Activity {
 		String description = descriptionField.getText().toString();		
 	
 		for(boolean b : selections){
+			//if (b == true)
+			Log.d(LOG_TAG, "selections[" + b + "]");
+			//TODO:
 			
 		}
 		
@@ -124,7 +127,13 @@ public class PaymentActivity extends Activity {
 			return null;
 		}
 		
-		Log.d(LOG_TAG, String.format( "creating a new payment (cash: %f)", cash));
+		//debug
+		String debs = "";
+		for(Person p : paymentDebtors){
+			debs += p.getName() + " ";
+		}
+		
+		Log.d(LOG_TAG, String.format( "creating a new payment (cash: %f), debtors: %s", cash, debs));
 	
 		
 		
@@ -156,15 +165,15 @@ public class PaymentActivity extends Activity {
 	public class DialogSelectionClickHandler implements DialogInterface.OnMultiChoiceClickListener
 	{
 		public void onClick( DialogInterface dialog, int clicked, boolean selected )
-		{
-			Log.d( LOG_TAG, options[ clicked ] + " selected: " + selected );
+		{			
+			//Log.d( LOG_TAG, options[ clicked ] + " selected: " + selected );
 		}
 	}
 	
 	private void addDebtors(){
 		debtors.clear();
 		for( int i = 0; i < options.length; i++ ){
-			Log.d( LOG_TAG, options[ i ] + " selected: " + selections[i] );
+			Log.d( LOG_TAG,"addDebtors; " +  options[ i ] + " selected: " + selections[i] );
 			if (selections[i] == true){
 				debtors.add(options[i]);
 			}

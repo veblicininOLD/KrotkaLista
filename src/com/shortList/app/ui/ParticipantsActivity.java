@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import com.shortList.app.control.PaymentManager;
 import com.shortList.app.db.DBAdapter;
@@ -33,17 +34,18 @@ import com.shortList.app.model.Person;
 public class ParticipantsActivity extends  ListActivity  {
 
     private static final String LOG_TAG = "ParticipantsActivity";
-
-
-	//protected DBAdapter db; 
+ 
 	protected SimpleCursorAdapter adapter;
 	protected long choosenParticipant;
 	protected PaymentManager pm = PaymentManager.getInstance();
 	protected List<Person> payments;
+	private static final String AMOUNT_OF_PAYMENTS = "amount of paymetns";
 
 	
 	protected static final int CREATE_NEW_PARTICIPANT = 10;  
-	protected static final int DELETE_PARTICIPANT = 20; 
+	protected static final int DELETE_PARTICIPANT = 20;
+	protected static final int PARTICIPANT_NOT_ALLOWED_TO_BE_DELETED = 30;
+	protected static final String NAME_OF_PERSON = "name of person to check"; 
 	
 	public void refresh(){
 		setListAdapter(new ArrayAdapter<String>(this,
@@ -82,32 +84,35 @@ public class ParticipantsActivity extends  ListActivity  {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.participant_menu, menu);
 		return true;
-	}
-	
- 
+	} 
 	
 //	@Override
 //	protected void onPrepareDialog(int id, Dialog dialog) {
-//		AlertDialog d = (AlertDialog) dialog;	 
-//		switch(id){
-//			case CREATE_NEW_PARTICIPANT:
-//			case DELETE_PARTICIPANT:
-//		} 
-//		// TODO Auto-generated method stub
-//		super.onPrepareDialog(id, dialog);
+//		AlertDialog d = (AlertDialog) dialog;	
+//
+//		switch (id) {
+//		case PARTICIPANT_NOT_ALLOWED_TO_BE_DELETED:
+//			Log.d(LOG_TAG, "onPreprareDialog");
+//			d.setMessage(String.format(this.getString(R.string.warning_deletion_not_allowed), numberOfPayments , pm.getParticipantNames()[(int)choosenParticipant] ));
+//			break;
+//		default:
+//			d = null;
+//			break;
+//		}
+//		
+//		
+//	//	super.onPrepareDialog(id, dialog);
 //	}
-	
-	
 	
 	@Override
 	protected Dialog onCreateDialog(int id, Bundle args) {
 		Dialog dialog = null;
+		LayoutInflater factory = LayoutInflater.from(this);
+		final View textEntryView = factory.inflate(R.layout.alert_dialog_new_participant, null);
 		 
 		switch(id){
 		case CREATE_NEW_PARTICIPANT:
-			LayoutInflater factory = LayoutInflater.from(this);
-            final View textEntryView = factory.inflate(R.layout.alert_dialog_new_participant, null);
-            final EditText name = (EditText) textEntryView.findViewById(R.id.name_of_new_participant);
+            final EditText name = (EditText) textEntryView.findViewById(R.id.name_of_new_participant);        
             return new AlertDialog.Builder(this)
              //   .setIconAttribute(android.R.attr.alertDialogIcon) 
             .setTitle(R.string.participant_add_new_title)
@@ -128,6 +133,7 @@ public class ParticipantsActivity extends  ListActivity  {
 		case DELETE_PARTICIPANT:
         //    final EditText name_delete = (EditText) textEntryView.findViewById(R.id.name_of_new_participant);
 			 // new AlertDialog.Builder(this);
+	
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			 builder.setMessage(R.string.dialog_ask_for_participant_deletion)
 		       .setCancelable(false)
@@ -145,6 +151,24 @@ public class ParticipantsActivity extends  ListActivity  {
 		           }
 		       });
 			 return builder.create();
+		case PARTICIPANT_NOT_ALLOWED_TO_BE_DELETED:
+//			int i = 0;
+//			if (args.containsKey(AMOUNT_OF_PAYMENTS))
+//				i = args.getInt(AMOUNT_OF_PAYMENTS);
+//			if (args.containsKey(NAME_OF_PERSON))
+//				Log.d(LOG_TAG, args.getString(NAME_OF_PERSON));
+//            Log.d(LOG_TAG, "new dialog: " + i);
+//			Log.d(LOG_TAG, pm.getParticipantNames()[(int)choosenParticipant]);
+			   return new AlertDialog.Builder(this)
+	             //   .setIconAttribute(android.R.attr.alertDialogIcon) 
+	            .setTitle(R.string.warning_deletion_not_allowed_title)
+	          //  .setMessage(String.format(this.getString(R.string.warning_deletion_not_allowed), numberOfPayments , pm.getParticipantNames()[(int)choosenParticipant] ))	               
+	                .setPositiveButton(R.string.form_ok, new DialogInterface.OnClickListener() {
+	                    public void onClick(DialogInterface dialog, int whichButton) {                        
+	                    	//pm.addParticipant(new Person(save(name.getText().toString(), pm.getActiveEvent()), name.getText().toString(), pm.getActiveEvent().getId()));                                    			                    	
+	                    	dialog.dismiss();                	
+	                    }
+	                }).create(); 
 		default:
 	        dialog = null;
 		}
@@ -162,8 +186,26 @@ public class ParticipantsActivity extends  ListActivity  {
 		loadData();
 	}
 
+	/**
+	 * Checks if participant has payments in which he is a payer or a debtor.
+	 * If yes, the warning is displayed. 
+	 * @return true if participant can be deleted
+	 */
 	protected boolean check() {
-		// TODO Auto-generated method stub
+		String nameOfParticipant = pm.getParticipantNames()[(int)choosenParticipant];
+		int numberOfPayments = pm.hasPersonPayments(nameOfParticipant);
+		Bundle b = new Bundle(); 
+		b.putInt(AMOUNT_OF_PAYMENTS, numberOfPayments);
+		b.putString(NAME_OF_PERSON, nameOfParticipant);
+		
+		if (numberOfPayments > 0){			
+			//showDialog(PARTICIPANT_NOT_ALLOWED_TO_BE_DELETED, b);
+	      String desc = String.format(this.getString(R.string.warning_deletion_not_allowed), numberOfPayments , pm.getParticipantNames()[(int)choosenParticipant] );	               
+
+			Toast toast =  Toast.makeText(this, desc, Toast.LENGTH_LONG); 
+			toast.show();
+			return false;
+		}		 		
 		return true;
 	}
 
@@ -206,6 +248,7 @@ public class ParticipantsActivity extends  ListActivity  {
 	 */
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
+		Log.d(LOG_TAG, String.format("Choosen participantId: %d" , id));
 		choosenParticipant = id;
 		showDialog(DELETE_PARTICIPANT); 
 	}

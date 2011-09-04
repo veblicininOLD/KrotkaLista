@@ -246,9 +246,10 @@ public class DBAdapter extends SQLiteOpenHelper {
 
 
 	private Person getDebtorFromCursor(Cursor debtorCursor, long eventId, List<Person> persons) {
-		long debtorId = debtorCursor.getLong(1); 
-		String name = findNameById(eventId, persons);		
+		long debtorId = debtorCursor.getLong(1); 		
+		String name = findNameById(debtorId, persons);		
 		Person person = new Person(debtorId, name, eventId);
+		Log.d(LOG_TAG, String.format("Loading debtor %s, [%d]", name, debtorId));
 		return person;
 	}
 
@@ -323,7 +324,7 @@ public class DBAdapter extends SQLiteOpenHelper {
 			initialValues.put(KEY_DEBTOR_DEBTOR_ID, debtor.getId());
 			retCode = db.insert(DATABASE_TABLE_DEBTOR, null, initialValues);	
 		Log.d(LOG_TAG, String.format(
-				"Saving debtors %d; DBCode: %d eventId: %d, paymentId: %d, debtor: %s", debtors.size(),  retCode, eventId, paymentId, debtor.getName()));
+				"Saving debtors %d; DBCode: %d eventId: %d, paymentId: %d, debtor: %s, debtorID %d ", debtors.size(),  retCode, eventId, paymentId, debtor.getName(), debtor.getId()));
 		} 
 		return retCode;
 	}

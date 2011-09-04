@@ -48,6 +48,7 @@ public class Payment extends Entity implements Comparable<Payment>{
 	public boolean isDebtor(Person person){
 		return debtors.contains(person);		
 	}
+	 
 
 	public Date getDate() {
 		return date;
