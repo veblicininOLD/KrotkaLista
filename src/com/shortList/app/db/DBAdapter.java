@@ -139,10 +139,10 @@ public class DBAdapter extends SQLiteOpenHelper {
 		ContentValues initialValues = new ContentValues(); 
 		initialValues.put(KEY_EVENT_ID, event.getId());	 
 		initialValues.put(KEY_USER_NAME, p); 	
-		tmp = db.insert(DATABASE_TABLE_PERSON, null, initialValues);
-		retCode = ( tmp < 0) ? -1 : retCode;	
+		retCode = db.insert(DATABASE_TABLE_PERSON, null, initialValues);
+		//retCode = ( tmp < 0) ? -1 : retCode;	
 		//Log.d(LOG_TAG, event.)
-		Log.d(LOG_TAG, String.format( "Saving Participant (%s); DBCode: %d", p, tmp));
+		Log.d(LOG_TAG, String.format( "Saving Participant (%s); DBCode: %d", p, retCode));
 		return retCode;
 	}
 

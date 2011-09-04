@@ -103,9 +103,11 @@ public class ParticipantsActivity extends  ListActivity  {
 //		
 //	//	super.onPrepareDialog(id, dialog);
 //	}
+	 
 	
 	@Override
-	protected Dialog onCreateDialog(int id, Bundle args) {
+//	protected Dialog onCreateDialog(int id, Bundle args) {
+	protected Dialog onCreateDialog(int id) {
 		Dialog dialog = null;
 		LayoutInflater factory = LayoutInflater.from(this);
 		final View textEntryView = factory.inflate(R.layout.alert_dialog_new_participant, null);
@@ -118,9 +120,10 @@ public class ParticipantsActivity extends  ListActivity  {
             .setTitle(R.string.participant_add_new_title)
                 .setView(textEntryView)
                 .setPositiveButton(R.string.form_yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {                        
-                    	pm.addParticipant(new Person(save(name.getText().toString(), pm.getActiveEvent()), name.getText().toString(), pm.getActiveEvent().getId()));                                    		
-                    	Log.d(LOG_TAG, String.format("Name of new participant: %s", name.getText().toString()));
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    	long id = save(name.getText().toString(), pm.getActiveEvent());
+                    	pm.addParticipant(new Person(id, name.getText().toString(), pm.getActiveEvent().getId()));                                    		
+                    	Log.d(LOG_TAG, String.format("Name of new participant: %s, id: %d", name.getText().toString(), id));
                     	refresh();                	
                     }
                 })
